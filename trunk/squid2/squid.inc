@@ -195,6 +195,9 @@ function squid_install_command() {
 if [ -z "`ps auxw | grep "[s]quid -D"|awk '{print $2}'`" ];then
 	/usr/local/sbin/squid -D
 fi
+if [ -z "`ps -auxw | grep proxy_monitor.sh |awk '{print $2}'`" ];then
+	/usr/local/etc/rc.d/proxy_monitor.sh start &
+fi
 
 EOD;
 	$rc['stop'] = <<<EOD
@@ -203,7 +206,7 @@ EOD;
 sleep 5
 killall -9 squid 2>/dev/null
 killall pinger 2>/dev/null
-killall proxy_monitor.sh 2>/dev/null
+kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
 
 EOD;
 	$rc['restart'] = <<<EOD
