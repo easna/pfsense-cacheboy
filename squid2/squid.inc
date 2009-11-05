@@ -203,7 +203,7 @@ EOD;
 sleep 5
 killall -9 squid 2>/dev/null
 killall pinger 2>/dev/null
-kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
+killall proxy_monitor.sh 2>/dev/null
 
 EOD;
 	$rc['restart'] = <<<EOD
