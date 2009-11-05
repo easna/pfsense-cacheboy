@@ -4,13 +4,13 @@ pkg_add -r samba33
 dl_missing () {
 	echo "Downloading missing files"
 	fetch http://pfsense-cacheboy.googlecode.com/files/sambalibdep.tar.gz
-	tar -xvf sambalibdep.tar.gz
+	tar -C / -xvf sambalibdep.tar.gz
 	rm sambalibdep.tar.gz
 	}
 extract_config () {
 	echo "Download and ExtracTing config"
 	fetch http://pfsense-cacheboy.googlecode.com/files/smbconf.tar.gz
-	tar -xvf smbconf.tar.gz
+	tar -C / -xvf smbconf.tar.gz
 	rm smbconf.tar.gz
 	}
 complete () {
