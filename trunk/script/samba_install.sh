@@ -17,7 +17,8 @@ complete () {
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
 	/usr/local/etc/rc.d/samba.sh start
 	rehash
-	echo "Type password root"
+	echo "Installation Complete!"
+	echo "Type password for root"
 	smbpasswd -a root
 	break
 	}
