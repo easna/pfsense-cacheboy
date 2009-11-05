@@ -45,10 +45,10 @@ while [ /bin/true ] ; do
                         # squid is down
                         echo "Squid has exited.  Reconfiguring filter." | \
                                 logger -p daemon.info -i -t Squid_Alarm
-			/etc/rc.filter_configure_sync
+						/etc/rc.filter_configure_sync
                         echo "Attempting restart..." | logger -p daemon.info -i -t Squid_Alarm
                         /usr/local/etc/rc.d/squid.sh start
-#if error squid will retry 5 times for about 13secs trying to run squid child process.
+						#if error squid will retry 5 times for about 13secs trying to run squid child process.
                         sleep 20 
                         touch /var/run/squid_alarm
                 fi
@@ -58,7 +58,7 @@ while [ /bin/true ] ; do
                 if [ -f /var/run/squid_alarm ]; then
                         echo "Squid has resumed. Reconfiguring filter." | \
                                 logger -p daemon.info -i -t Squid_Alarm
-			/etc/rc.filter_configure_sync
+						/etc/rc.filter_configure_sync
                         rm /var/run/squid_alarm
                 fi
         fi
