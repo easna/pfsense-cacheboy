@@ -14,10 +14,10 @@ extract_config () {
 	rm smbconf.tar.gz
 	}
 complete () {
-	echo "run "smbpasswd -a root" to add user root"
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
 	/usr/local/etc/rc.d/samba.sh start
 	rehash
+	echo "Type password root"
 	smbpasswd -a root
 	break
 	}
