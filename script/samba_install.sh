@@ -12,6 +12,9 @@ extract_config () {
 	fetch http://pfsense-cacheboy.googlecode.com/files/smbconf.tar.gz
 	tar -C / -xvf smbconf.tar.gz
 	rm smbconf.tar.gz
+	hostname=`hostname | sed 's/\...*//'`
+	cat /usr/local/etc/smb.conf | sed s/hostname_only/$hostname/ > /usr/local/etc/smb.conf.tmp
+	mv /usr/local/etc/smb.conf.tmp /usr/local/etc/smb.conf
 	}
 complete () {
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
