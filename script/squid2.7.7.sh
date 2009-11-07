@@ -1,6 +1,5 @@
 #!/bin/sh
 version=`uname -r | sed 's/\([0-9]\).*/\1/'`
-version=1
 if [ "$version" = 7 ]; then
 echo "Downloading squid2.7.7 for freebsd7"
 fetch http://pfsense-cacheboy.googlecode.com/files/freebsd7.X.squid.tar.gz
