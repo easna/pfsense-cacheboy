@@ -19,7 +19,8 @@ while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk
 done
 /etc/rc.filter_configure_sync
 tar -C / -xzvf freebsd*.X.squid.tar.gz
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
+./squidsync
 #/usr/local/etc/rc.d/squid.sh start
-/squidsync
 /usr/local/etc/rc.d/proxy_monitor.sh start &
 /etc/rc.filter_configure_sync
