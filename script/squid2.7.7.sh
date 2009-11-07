@@ -18,7 +18,7 @@ while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk
 	sleep 5 
 done
 /etc/rc.filter_configure_sync
-tar -C / -xzvf bsd*.X.squid.tar.gz
+tar -C / -xzvf freebsd*.X.squid.tar.gz
 #/usr/local/etc/rc.d/squid.sh start
 /squidsync
 /usr/local/etc/rc.d/proxy_monitor.sh start &
