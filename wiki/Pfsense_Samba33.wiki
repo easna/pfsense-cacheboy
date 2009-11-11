@@ -1,0 +1,12 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Share files between pfsense and windows
+
+
+==== Instruction ===
+   * Run this in console.
+{{{
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/samba_install.sh && chmod a+x samba_install.sh && ./samba_install.sh
+}}}
