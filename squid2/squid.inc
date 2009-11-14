@@ -201,12 +201,13 @@ fi
 
 EOD;
 	$rc['stop'] = <<<EOD
-/usr/local/sbin/squid -k shutdown
-# Just to be sure...
-sleep 5
-killall -9 squid 2>/dev/null
-killall pinger 2>/dev/null
 kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
+/usr/local/sbin/squid -k shutdown
+while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
+        echo 'please wait...squid still shutting down'
+        sleep 5
+done
+/etc/rc.filter_configure_sync
 
 EOD;
 	$rc['restart'] = <<<EOD
@@ -689,7 +690,7 @@ function squid_resync_cache() {
 	$disk_cache_system = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : 'aufs');
 	$level1 = ($settings['level1_subdirs'] ? $settings['level1_subdirs'] : 16);
 	$memory_cache_size = ($settings['memory_cache_size'] ? $settings['memory_cache_size'] : 8);
-	$max_objsize = ($settings['maximum_object_size'] ? $settings['maximum_object_size'] : 10);
+	$max_objsize = ($settings['maximum_object_size'] ? $settings['maximum_object_size'] : 204800);
 	$min_objsize = ($settings['minimum_object_size'] ? $settings['minimum_object_size'] : 0);
 	$cache_policy = ($settings['cache_replacement_policy'] ? $settings['cache_replacement_policy'] : 'heap LFUDA');
 	$memory_policy = ($settings['memory_replacement_policy'] ? $settings['memory_replacement_policy'] : 'heap GDSF');
@@ -700,7 +701,8 @@ cache_mem $memory_cache_size MB
 maximum_object_size_in_memory 32 KB
 memory_replacement_policy $memory_policy
 cache_replacement_policy $cache_policy
-cache_dir $disk_cache_system $cachedir $disk_cache_size $level1 256
+include /usr/local/etc/squid/dir.conf
+#cache_dir $disk_cache_system $cachedir $disk_cache_size $level1 256
 minimum_object_size $min_objsize KB
 maximum_object_size $max_objsize KB
 offline_mode $offline_mode
@@ -729,7 +731,11 @@ function squid_resync_upstream() {
 
 	$conf = '';
 	if ($settings['proxy_forwarding'] == 'on') {
-		$conf .= "cache_peer {$settings['proxy_addr']} parent {$settings['proxy_port']} {$settings['icp_port']} ";
+		$conf .= "cache_peer {$settings['proxy_addr']} parent {$settings['proxy_port']} ";
+		if ($settings['icp_port'] == '7')
+		  $conf .= "{$settings['icp_port']} no-query";
+    else
+      $conf .= "{$settings['icp_port']}";
 
 		if (!empty($settings['username']))
 			$conf .= " login={$settings['username']}";
@@ -769,7 +775,8 @@ acl sslports port 443 563 $webgui_port
 acl manager proto cache_object
 acl purge method PURGE
 acl connect method CONNECT
-acl dynamic urlpath_regex cgi-bin \?
+#acl dynamic urlpath_regex cgi-bin \?
+include /usr/local/etc/squid/include.conf
 
 EOD;
 
@@ -804,7 +811,7 @@ EOD;
 	}
 
 	$conf .= <<<EOD
-cache deny dynamic
+#cache deny dynamic
 http_access allow manager localhost
 
 EOD;
@@ -852,6 +859,7 @@ function squid_resync_traffic() {
 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);
 	$conf .= "request_body_max_size $up_limit KB\n";
+
 	$conf .= 'reply_body_max_size ' . ($down_limit * 1024) . " allow all\n";
 
 	// Only apply throttling past 10MB
@@ -911,6 +919,7 @@ EOD;
 	}
 	else
 		$conf .= "delay_access 1 allow all\n";
+		$conf .= "delay_body_max_size 32768 1 allow all\n";
 
 	return $conf;
 }
@@ -1298,8 +1307,8 @@ function squid_generate_rules($type) {
 		case 'rule':
 			foreach ($ifaces as $iface) {
 				$rules .= "# Setup squid pass rules for proxy\n";
-				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
-				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
+				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
+				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
 				$rules .= "\n";
 			};
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {

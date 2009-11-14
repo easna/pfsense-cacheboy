@@ -2,4 +2,5 @@
 <?php
 require_once("/usr/local/pkg/squid.inc");
 squid_resync();
+squid_generate_rules
 ?>
