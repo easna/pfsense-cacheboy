@@ -5,8 +5,8 @@
 My favorite tool for know what needs to cache.
 
 === New Features ===
-It can configured to show you only the miss (Hacked).
-Minimum request per content.
+#It can configured to show you only the miss.
+#Minimum request per content.
 
 == Instructions ==
 
