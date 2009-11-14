@@ -72,7 +72,7 @@
 			<text>Traffic management</text>
 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
 		</tab>
-		<tab>
+<!-- 		<tab>
 			<text>Auth settings</text>
 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
 		</tab>
@@ -80,7 +80,7 @@
 			<text>Local users</text>
 			<url>/pkg.php?xml=squid_users.xml</url>
 			<active/>
-		</tab>
+		</tab> -->
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>

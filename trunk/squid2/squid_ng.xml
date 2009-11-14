@@ -89,14 +89,14 @@
 			<text>Traffic Mgmt</text>
 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
 		</tab>
-		<tab>
+<!-- 		<tab>
 			<text>Auth Settings</text>
 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
 		</tab>
 		<tab>
 			<text>Extended Auth Settings</text>
 			<url>/pkg_edit.php?xml=squid_extauth.xml&amp;id=0</url>
-		</tab>
+		</tab> -->
 	</tabs>
 	<configpath>installedpackages->package->squidng->configuration->settings</configpath>
 	<additional_files_needed>
