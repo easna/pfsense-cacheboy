@@ -4,9 +4,9 @@ tar -xvf srg.tar.gz -C /
 echo "Working dir"
 echo "/usr/local/www/srg_reports"
 read path
-if [ $path = "\n" ]
+if [ ! $path ]
 then
-path=/usr/local/www/srg_srgports
+path=/usr/local/www/srg_reports
 fi
 dir=`echo $path | sed 's+.*/++'`
 sed -e 's+^output_dir.*+output_dir "'$path'"+' -e 's+^output_url .*+output_url "/'$dir'/"+' /usr/local/etc/srg/srg.conf > srg.conf.tmp
