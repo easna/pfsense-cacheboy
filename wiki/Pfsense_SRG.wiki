@@ -1,0 +1,16 @@
+#summary Squid Log Analysis
+
+= Introduction =
+
+My favorite tool for know what needs to cache.
+
+=== New Features ===
+It can configured to show you only the miss (Hacked).
+Minimum request per content.
+
+== Instructions ==
+
+Just run this at console.
+{{{
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/srg.sh && chmod +x srg.sh && ./srg.sh
+}}}
