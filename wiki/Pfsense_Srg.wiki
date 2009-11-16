@@ -10,3 +10,7 @@ Run this at your console
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/srg.sh && chmod +x srg.sh && ./srg.sh
 }}}
+
+===Features _Added_===
+*min_connects_content* - _shows minimum number of request per content while_ *min_connects* _shows per domain._<br>
+*miss_only* - _shows only miss._<br>
