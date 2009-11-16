@@ -1,0 +1,12 @@
+#summary Squid Report Generator.
+
+= Introduction =
+
+My favorite tool to determine what needs to cache.
+
+
+=== Instruction ===
+Run this at your console
+{{{
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/srg.sh && chmod +x srg.sh && ./srg.sh
+}}}
