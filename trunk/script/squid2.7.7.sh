@@ -15,7 +15,7 @@ kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
 /usr/local/etc/rc.d/squid.sh stop
 while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
 	echo 'please wait...squid still shutting down'
-	sleep 5 
+	sleep 5
 done
 /etc/rc.filter_configure_sync
 tar -C / -xzvf freebsd*.X.squid.tar.gz
