@@ -7,12 +7,22 @@ fi
 echo "Downloading Lusca"
 fetch http://pfsense-cacheboy.googlecode.com/files/pfsense.lusca.tar.gz
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/refresh.conf
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/cachemgr.conf
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/storeurl.pl
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/include.conf
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/dir.conf
+mv *.conf /usr/local/etc/squid/
+mv storeurl.pl /usr/local/etc/squid/
+chmod a+x /usr/local/etc/squid/storeurl.pl
 kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
 squid -k shutdown
 while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
 	echo 'please wait...squid still shutting down'
 	sleep 5
 done
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/lusca.diff
+patch < lusca.diff -d /
 /etc/rc.filter_configure_sync
 ./squidsync
 tar -xvf pfsense.lusca.tar.gz -C /

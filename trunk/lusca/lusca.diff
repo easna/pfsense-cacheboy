@@ -1,0 +1,193 @@
+diff -rubwB /usr/local/pkg/squid.inc /usr/local/pkg/squid.inc
+--- /usr/local/pkg/squid.inc	2009-11-16 14:24:37.000000000 +0800
++++ /usr/local/pkg/squid.inc	2009-11-14 01:15:34.000000000 +0800
+@@ -92,8 +92,8 @@
+ 		mwexec("/usr/local/sbin/squid -z");
+ 	}
+ 
+-	if(file_exists("/var/squid/cache/swap.state"))
+-		exec("chmod a+rw /var/squid/cache/swap.state");
++	if(file_exists("$cachedir/swap.state"))
++		exec("chmod a+rw $cachedir/swap.state");
+ 
+ }
+ 
+@@ -600,7 +600,7 @@
+ 		}
+ 	}
+ 	if (($settings['transparent_proxy'] == 'on')) {
+-		$conf .= "http_port 127.0.0.1:80 transparent\n";
++		$conf .= "http_port 127.0.0.1:80 transparent http11\n";
+ 	}
+ 	$icp_port = ($settings['icp_port'] ? $settings['icp_port'] : 0);
+ 
+@@ -696,7 +696,8 @@
+ maximum_object_size_in_memory 32 KB
+ memory_replacement_policy $memory_policy
+ cache_replacement_policy $cache_policy
+-cache_dir $disk_cache_system $cachedir $disk_cache_size $level1 256
++include /usr/local/etc/squid/dir.conf
++#cache_dir $disk_cache_system $cachedir $disk_cache_size $level1 256
+ minimum_object_size $min_objsize KB
+ maximum_object_size $max_objsize KB
+ offline_mode $offline_mode
+@@ -769,7 +770,8 @@
+ acl manager proto cache_object
+ acl purge method PURGE
+ acl connect method CONNECT
+-acl dynamic urlpath_regex cgi-bin \?
++#acl dynamic urlpath_regex cgi-bin \?
++include /usr/local/etc/squid/include.conf
+ 
+ EOD;
+ 
+@@ -804,7 +806,7 @@
+ 	}
+ 
+ 	$conf .= <<<EOD
+-cache deny dynamic
++#cache deny dynamic
+ http_access allow manager localhost
+ 
+ EOD;
+@@ -851,7 +853,7 @@
+ 
+ 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
+ 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);
+-	$conf .= "request_body_max_size $up_limit KB\n";
++	$conf .= 'request_body_max_size ' . ($up_limit * 1024) . " allow all\n";
+ 	$conf .= 'reply_body_max_size ' . ($down_limit * 1024) . " allow all\n";
+ 
+ 	// Only apply throttling past 10MB
+@@ -911,6 +913,7 @@
+ 	}
+ 	else
+ 		$conf .= "delay_access 1 allow all\n";
++		$conf .= "delay_body_max_size 32768 1 allow all\n";
+ 
+ 	return $conf;
+ }
+@@ -1298,8 +1301,8 @@
+ 		case 'rule':
+ 			foreach ($ifaces as $iface) {
+ 				$rules .= "# Setup squid pass rules for proxy\n";
+-				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
+-				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
++				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
++				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
+ 				$rules .= "\n";
+ 			};
+ 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
+diff -rubwB /usr/local/pkg/squid.xml /usr/local/pkg/squid.xml
+--- /usr/local/pkg/squid.xml	2009-11-16 14:22:11.000000000 +0800
++++ /usr/local/pkg/squid.xml	2009-11-14 01:18:52.083331000 +0800
+@@ -83,14 +83,14 @@
+ 			<text>Traffic management</text>
+ 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
+ 		</tab>
+-		<tab>
++<!-- 		<tab>
+ 			<text>Auth settings</text>
+ 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
+ 		</tab>
+ 		<tab>
+ 			<text>Local users</text>
+ 			<url>/pkg.php?xml=squid_users.xml</url>
+-		</tab>
++		</tab> -->
+ 	</tabs>
+ 	<!-- Installation -->
+ 	<additional_files_needed>
+@@ -309,9 +309,9 @@
+ 	<custom_php_command_before_form>
+ 		squid_before_form_general(&amp;$pkg);
+ 	</custom_php_command_before_form>
+-	<custom_add_php_command>
++<!-- 	<custom_add_php_command>
+ 		squid_resync();
+-	</custom_add_php_command>
++	</custom_add_php_command> -->
+ 	<custom_php_validation_command>
+ 		squid_validate_general($_POST, &amp;$input_errors);
+ 	</custom_php_validation_command>
+diff -rubwB /usr/local/pkg/squid_cache.xml /usr/local/pkg/squid_cache.xml
+--- /usr/local/pkg/squid_cache.xml	2009-11-16 14:25:02.000000000 +0800
++++ /usr/local/pkg/squid_cache.xml	2009-11-12 03:00:30.896898000 +0800
+@@ -71,14 +71,14 @@
+ 			<text>Traffic management</text>
+ 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
+ 		</tab>
+-		<tab>
++<!-- 		<tab>
+ 			<text>Auth settings</text>
+ 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
+ 		</tab>
+ 		<tab>
+ 			<text>Local users</text>
+ 			<url>/pkg.php?xml=squid_users.xml</url>
+-		</tab>
++		</tab> -->
+ 	</tabs>
+ 	<fields>
+ 		<field>
+diff -rubwB /usr/local/pkg/squid_nac.xml /usr/local/pkg/squid_nac.xml
+--- /usr/local/pkg/squid_nac.xml	2009-11-16 14:24:41.000000000 +0800
++++ /usr/local/pkg/squid_nac.xml	2009-11-12 03:03:59.195060000 +0800
+@@ -71,14 +71,14 @@
+ 			<text>Traffic management</text>
+ 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
+ 		</tab>
+-		<tab>
++<!-- 		<tab>
+ 			<text>Auth settings</text>
+ 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
+ 		</tab>
+ 		<tab>
+ 			<text>Local users</text>
+ 			<url>/pkg.php?xml=squid_users.xml</url>
+-		</tab>
++		</tab> -->
+ 	</tabs>
+ 	<fields>
+ 		<field>
+diff -rubwB /usr/local/pkg/squid_traffic.xml /usr/local/pkg/squid_traffic.xml
+--- /usr/local/pkg/squid_traffic.xml	2009-11-16 14:24:48.000000000 +0800
++++ /usr/local/pkg/squid_traffic.xml	2009-11-12 03:03:04.684100000 +0800
+@@ -71,14 +71,14 @@
+ 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
+ 			<active/>
+ 		</tab>
+-		<tab>
++<!-- 		<tab>
+ 			<text>Auth settings</text>
+ 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
+ 		</tab>
+ 		<tab>
+ 			<text>Local users</text>
+ 			<url>/pkg.php?xml=squid_users.xml</url>
+-		</tab>
++		</tab> -->
+ 	</tabs>
+ 	<fields>
+ 		<field>
+diff -rubwB /usr/local/pkg/squid_upstream.xml /usr/local/pkg/squid_upstream.xml
+--- /usr/local/pkg/squid_upstream.xml	2009-11-16 14:24:50.000000000 +0800
++++ /usr/local/pkg/squid_upstream.xml	2009-11-12 03:02:25.153680000 +0800
+@@ -71,14 +71,14 @@
+ 			<text>Traffic management</text>
+ 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
+ 		</tab>
+-		<tab>
++<!-- 		<tab>
+ 			<text>Auth settings</text>
+ 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
+ 		</tab>
+ 		<tab>
+ 			<text>Local users</text>
+ 			<url>/pkg.php?xml=squid_users.in</url>
+-		</tab>
++		</tab> -->
+ 	</tabs>
+ 	<fields>
+ 		<field>
+
