@@ -4,7 +4,6 @@ if [ "$version" = 8 ]; then
 echo "Warning lusca was not compiled for freebsd8"
 echo "Lusca may run slow and with some errors"
 fi
-echo "Downloading Lusca"
 fetch http://pfsense-cacheboy.googlecode.com/files/pfsense.lusca.tar.gz
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/refresh.conf
