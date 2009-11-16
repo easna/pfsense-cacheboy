@@ -23,6 +23,8 @@ while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l |
 done
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/lusca.diff
 patch < lusca.diff -d /usr/local/pkg/
+find /usr/local/pkg/ -name '*.rej' -delete
+find /usr/local/pkg/ -name '*.orig' -delete
 /etc/rc.filter_configure_sync
 ./squidsync
 tar -xvf pfsense.lusca.tar.gz -C /
