@@ -22,7 +22,7 @@ while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l |
 	sleep 5
 done
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/lusca.diff
-patch < lusca.diff -d /
+patch < lusca.diff -d /usr/local/pkg/
 /etc/rc.filter_configure_sync
 ./squidsync
 tar -xvf pfsense.lusca.tar.gz -C /
