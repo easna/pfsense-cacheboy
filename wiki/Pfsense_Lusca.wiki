@@ -13,6 +13,6 @@ fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/lusca.sh && chmod 
 }}}
 *Notes*<br>
 Configurations at:<br>
-/usr/local/etc/squid/dir.conf - _cache directory_<br>
+/usr/local/etc/squid/dir.conf - _cache directory, web GUI cache_dir will not be used for now. Use this instead_<br>
 /usr/local/etc/squid/include.conf - _other squid configurations_<br>
 /usr/local/etc/squid/refresh.conf - _refresh patterns_<br>
