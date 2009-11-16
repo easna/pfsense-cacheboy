@@ -1,0 +1,13 @@
+#summary Install Lusca on pfsense.
+= Introduction =
+Lusca r14371 patch r08. Patches applied:
+  # store-stale, ignore-must-revalidate
+  # vary aware using storeurl
+  # redirect loop using storeurl
+  # save vary object other than COSS (vary index will lost on rebuild)
+=== Instruction ===
+  # Install pfsense's squid package first.
+  # Run this in console
+{{{
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/lusca.sh && chmod +x lusca.sh && ./lusca.sh
+}}}
