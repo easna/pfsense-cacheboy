@@ -1,13 +1,21 @@
 #summary Install Lusca on pfsense.
 = Introduction =
+Compiled with:<br>
+'--enable-removal-policies=heap' - _we don't need lru_<br>
+'--enable-storeio=aufs,coss,null' - _null if you don't want to use your hard drive_<br>
+'--enable-delay-pools' <br>
+'--enable-arp-acl' - _mac address acl_ <br>
+'--enable-pf-transparent' <br>
+'--enable-snmp' - _for MRTG_<br>
+
 Lusca r14371 patch r08. Patches applied:
   # store-stale, ignore-must-revalidate
   # vary aware using storeurl
   # redirect loop using storeurl
   # save vary object other than COSS (vary index will lost on rebuild)
 === Instruction ===
-  # Install pfsense's squid package first.
-  # Run this in console
+  # Install pfsense's squid(_squid2 series_) package first.
+  # Run this in console. _This will also remove some part of web GUI which is not needed when using transparent mode._
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/lusca.sh && chmod +x lusca.sh && ./lusca.sh
 }}}
