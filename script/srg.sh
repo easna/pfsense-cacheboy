@@ -15,6 +15,6 @@ if [ $path != /usr/local/www/$dir ]
 then
 	ln -s $path /usr/local/www/$dir
 fi
-echo "Your SRG configurations is save here"
-echo "/usr/local/etc/srg/srg.conf"
-srg --help
+rehash
+echo "Your SRG configurations is save in"
+echo "--> /usr/local/etc/srg/srg.conf"
