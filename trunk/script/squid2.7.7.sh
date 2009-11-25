@@ -17,6 +17,7 @@ while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk
 	echo 'please wait...squid still shutting down'
 	sleep 5
 done
+/etc/rc.conf_mount_rw
 /etc/rc.filter_configure_sync
 tar -C / -xzvf freebsd*.X.squid.tar.gz
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
@@ -26,3 +27,4 @@ mv squid.inc.tmp /usr/local/pkg/squid.inc
 #/usr/local/etc/rc.d/squid.sh start
 /usr/local/etc/rc.d/proxy_monitor.sh start &
 /etc/rc.filter_configure_sync
+/etc/rc.conf_mount_ro
