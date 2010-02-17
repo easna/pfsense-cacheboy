@@ -46,7 +46,7 @@
     <requirements>Describe your package requirements here</requirements>
     <faq>Currently there are no FAQ items provided.</faq>
 	<name>squid</name>
-	<version>2.7.STABLE7</version>
+	<version>r14372</version>
 	<title>Proxy server: General settings</title>
 	<include_file>/usr/local/pkg/squid.inc</include_file>
 	<menu>
@@ -63,85 +63,105 @@
 	</service>
 	<tabs>
 		<tab>
-			<text>General settings</text>
+			<text>General</text>
 			<url>/pkg_edit.php?xml=squid.xml&amp;id=0</url>
 			<active/>
 		</tab>
 		<tab>
-			<text>Upstream proxy</text>
+			<text>Upstream Proxy</text>
 			<url>/pkg_edit.php?xml=squid_upstream.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Cache management</text>
+			<text>Cache Mgmt</text>
 			<url>/pkg_edit.php?xml=squid_cache.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Access control</text>
+			<text>Access Control</text>
 			<url>/pkg_edit.php?xml=squid_nac.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Traffic management</text>
+			<text>Traffic Mgmt</text>
 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
 		</tab>
-<!-- 		<tab>
-			<text>Auth settings</text>
+		<tab>
+			<text>Auth Settings</text>
 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Local users</text>
+			<text>Local Users</text>
 			<url>/pkg.php?xml=squid_users.xml</url>
-		</tab> -->
+		</tab>
 	</tabs>
 	<!-- Installation -->
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid.inc</item>
+		<item>http://bsd72/local/squid2/squid.inc</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
+		<item>http://bsd72/local/squid2/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_nac.xml</item>
+		<item>http://bsd72/local/squid2/squid_nac.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_ng.xml</item>
+		<item>http://bsd72/local/squid2/squid_traffic.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_traffic.xml</item>
+		<item>http://bsd72/local/squid2/squid_upstream.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_upstream.xml</item>
+		<item>http://bsd72/local/squid2/squid_auth.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_auth.xml</item>
-	</additional_files_needed>
-	<additional_files_needed>
-	    <prefix>/usr/local/pkg/</prefix>
-	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_users.xml</item>
+		<item>http://bsd72/local/squid2/squid_users.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/rc.d/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/proxy_monitor.sh</item>
+		<item>http://bsd72/local/squid2/proxy_monitor.sh</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
+		<item>http://bsd72/local/squid2/squid_cache.xml</item>
+	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/usr/local/etc/squid/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://bsd72/local/lusca/include.conf</item>
+	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/usr/local/etc/squid/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://bsd72/local/lusca/refresh.conf</item>
+	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/usr/local/etc/squid/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://bsd72/local/lusca/storeurl.pl</item>
+	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/usr/local/etc/squid/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://bsd72/local/lusca/refresh.conf</item>
+	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/etc/inc/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://bsd72/local/squid2/filter.diff</item>
 	</additional_files_needed>
 	<fields>
 		<field>
@@ -186,7 +206,6 @@
 			<fieldname>log_enabled</fieldname>
 			<description>This will enable the access log. Don't switch this on if you don't have much disk space left.</description>
 			<type>checkbox</type>
-			<enablefields>log_query_terms,log_user_agents</enablefields>
 		</field>
 		<field>
 			<fielddescr>Log store directory</fielddescr>
@@ -256,6 +275,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Enable Http11</fielddescr>
+			<fieldname>enable_http11</fieldname>
+			<description>If it really needs it.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>What to do with requests that have whitespace characters in the	URI</fielddescr>
 			<fieldname>uri_whitespace</fieldname>
       <description>&lt;b&gt; strip:&lt;/b&gt; The whitespace characters are stripped out of the URL. This is the behavior recommended by RFC2396. &lt;p&gt; &lt;b&gt; deny:&lt;/b&gt; The request is denied. The user receives an "Invalid Request" message.&lt;p&gt; &lt;b&gt; allow:&lt;/b&gt; The request is allowed and the URI is not changed. The whitespace characters remain in the URI.&lt;p&gt; &lt;b&gt; encode:&lt;/b&gt; The request is allowed and the whitespace characters are encoded according to RFC1738.&lt;p&gt; &lt;b&gt; chop:&lt;/b&gt;	The request is allowed and the URI is chopped at the first whitespace.</description>
@@ -289,6 +314,7 @@
 			<fieldname>dns_nameservers</fieldname>
 			<description>If you want to use other DNS-servers than the DNS-forwarder, enter the IPs here, separated by semi-colons (;).</description>
 			<type>input</type>
+			<default_value>127.0.0.1</default_value>
 			<size>60</size>
 		</field>
 		<field>
@@ -310,20 +336,25 @@
 		squid_before_form_general(&amp;$pkg);
 	</custom_php_command_before_form>
 	<custom_add_php_command>
+		log_error("squid.xml custom_add_php_command");
 		squid_resync();
 	</custom_add_php_command>
 	<custom_php_validation_command>
+		log_error("squid.xml custom_php_validation_command");
 		squid_validate_general($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
+		log_error("squid.xml custom_php_resync_config_command");	
 		squid_resync();
 		exec("/bin/rm -f /usr/local/etc/rc.d/squid");
 	</custom_php_resync_config_command>
 	<custom_php_install_command>
+		log_error("squid.xml custom_php_install_command");	
 		update_status("Checking Squid cache... One moment please...");
 		update_output_window("This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.");
+ 		exec("/bin/cat /etc/inc/filter.diff | /usr/bin/patch -p0 --force");
+  		exec("/bin/rm -f /etc/inc/filter.inc.*");
 		squid_install_command();
-		squid_resync();
 		exec("/bin/rm -f /usr/local/etc/rc.d/squid");
 	</custom_php_install_command>
 	<custom_php_deinstall_command>

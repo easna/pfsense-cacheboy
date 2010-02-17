@@ -36,7 +36,7 @@ if [ -f /var/run/squid_alarm ]; then
 fi
 
 # Sleep 5 seconds on startup not to mangle with existing boot scripts.
-sleep 5 
+sleep 10 
 # Squid monitor 2.0 
 while [ /bin/true ] ; do
         if [  ! -f /var/run/squid_alarm ]; then
