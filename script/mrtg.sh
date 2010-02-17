@@ -1,8 +1,6 @@
 #!/bin/sh
 pkg_add -r mrtg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/conf/mrtg.cfg
-mv mrtg.cfg /usr/local/etc/mrtg/mrtg.cfg
-chown mrtg:mrtg /usr/local/etc/mrtg/mrtg.cfg
 tae () {
 sed 's+\(^Workdir: \).*+\1'$dir'+' mrtg.cfg > mrtg.cfg.tmp
 break
@@ -18,5 +16,7 @@ case $dir in
 	;;
 esac
 done
-cat mrtg.cfg.tmp
+mv mrtg.cfg.tmp /usr/local/etc/mrtg/mrtg.cfg
+chown mrtg:mrtg /usr/local/etc/mrtg/mrtg.cfg
+mrtg /usr/local/etc/mrtg/mrtg.cfg
 
