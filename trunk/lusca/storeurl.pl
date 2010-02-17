@@ -4,7 +4,7 @@
 $|=1;
 while (<>) {
     @X = split;
-	$X[1] =~ s/&sig=.*//;
+#	$X[1] =~ s/&sig=.*//;
 	$x = $X[0] . " ";
 	$_ = $X[1];
 	$u = $X[1];
@@ -75,6 +75,10 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 } elsif (($u =~ /tube8|pornhub|xvideos/) && (m/^http:\/\/(([A-Za-z]+[0-9-.]+)*?)\.([a-z]*[0-9]?\.[^\/]{3}\/[a-z]*)(.*?)((\/[a-z]*)?(\/[^\/]*){4}\.[^\/\?]{3,4})(\?.*)?$/)) {
 	print $x . "http://cdn." . $3 . $5 . "\n";		
 			#...spicific servers end here.
+
+			#photos-X.ak.fbcdn.net where X a-z
+#} elsif (m/^http:\/\/photos-[a-z].ak.fbcdn.net\/(.*)/) {
+#	print $x . "http://photos.ak.fbcdn.net/" . $1  . "\n";
 			
 			#general purpose for cdn servers. add above your specific servers.
 } elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {

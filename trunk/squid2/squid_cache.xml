@@ -51,64 +51,92 @@
 	<include_file>squid.inc</include_file>
 	<tabs>
 		<tab>
-			<text>General settings</text>
+			<text>General</text>
 			<url>/pkg_edit.php?xml=squid.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Upstream proxy</text>
+			<text>Upstream Proxy</text>
 			<url>/pkg_edit.php?xml=squid_upstream.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Cache management</text>
+			<text>Cache Mgmt</text>
 			<url>/pkg_edit.php?xml=squid_cache.xml&amp;id=0</url>
 			<active/>
 		</tab>
 		<tab>
-			<text>Access control</text>
+			<text>Access Control</text>
 			<url>/pkg_edit.php?xml=squid_nac.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Traffic management</text>
+			<text>Traffic Mgmt</text>
 			<url>/pkg_edit.php?xml=squid_traffic.xml&amp;id=0</url>
 		</tab>
-<!-- 		<tab>
-			<text>Auth settings</text>
+		<tab>
+			<text>Auth Settings</text>
 			<url>/pkg_edit.php?xml=squid_auth.xml&amp;id=0</url>
 		</tab>
 		<tab>
-			<text>Local users</text>
+			<text>Local Users</text>
 			<url>/pkg.php?xml=squid_users.xml</url>
-		</tab> -->
+		</tab>
 	</tabs>
 	<fields>
+		<field>
+			<fielddescr>Hard disk cache system</fielddescr>
+			<fieldname>harddisk_cache_system</fieldname>
+			<description>This specifies the kind of storage system to use. &lt;p&gt; &lt;b&gt; aufs &lt;/b&gt; uses POSIX-threads to avoid blocking the main Squid process on disk-I/O. (Formerly known as async-io.) &lt;p&gt; &lt;b&gt; null &lt;/b&gt; will not store contents. &lt;p&gt; &lt;b&gt; coss &lt;/b&gt; a high performance for small contents. &lt;p&gt; &lt;b&gt; custom &lt;/b&gt; all configurations above be ignore your cache_dir will be at /usr/local/etc/squid/dir.conf</description>
+			<type>select</type>
+			<options>
+				<option><name>aufs</name><value>aufs</value></option>
+				<option><name>coss</name><value>coss</value></option>
+				<option><name>coss+aufs</name><value>coss+aufs</value></option>
+				<option><name>null</name><value>null</value></option>
+				<option><name>custom</name><value>custom</value></option>
+			</options>
+			<onchange>cache_system_changed()</onchange>
+			<default_value>aufs</default_value>
+		</field>
+		<field>
+			<fielddescr>coss Hard disk cache size</fielddescr>
+			<fieldname>coss_harddisk_cache_size</fieldname>
+			<description>This is the amount of disk space (in megabytes) to use for cached objects.</description>
+			<type>input</type>
+
+			<default_value>50</default_value>
+		</field>
 		<field>
 			<fielddescr>Hard disk cache size</fielddescr>
 			<fieldname>harddisk_cache_size</fieldname>
 			<description>This is the amount of disk space (in megabytes) to use for cached objects.</description>
 			<type>input</type>
-			<required/>
+
 			<default_value>100</default_value>
 		</field>
 		<field>
-			<fielddescr>Hard disk cache system</fielddescr>
-			<fieldname>harddisk_cache_system</fieldname>
-			<description>This specifies the kind of storage system to use. &lt;p&gt; &lt;b&gt; ufs &lt;/b&gt; is the old well-known Squid storage format that has always been there. &lt;p&gt; &lt;b&gt; aufs &lt;/b&gt; uses POSIX-threads to avoid blocking the main Squid process on disk-I/O. (Formerly known as async-io.) &lt;p&gt; &lt;b&gt; diskd &lt;/b&gt; uses a separate process to avoid blocking the main Squid process on disk-I/O.</description>
-			<type>select</type>
-			<default_value>aufs</default_value>
-			<options>
-				<option><name>ufs</name><value>ufs</value></option>
-				<option><name>aufs</name><value>aufs</value></option>
-				<option><name>diskd</name><value>diskd</value></option>
-			</options>
-		</field>		
+			<fielddescr>COSS Hard disk cache location</fielddescr>
+			<fieldname>coss_harddisk_cache_location</fieldname>
+			<description>For high performance put this in your fastest drive</description>
+			<type>input</type>
+			<size>60</size>
+
+			<default_value>/var/squid</default_value>
+		</field>
 		<field>
 			<fielddescr>Hard disk cache location</fielddescr>
 			<fieldname>harddisk_cache_location</fieldname>
 			<description>This is the directory where the cache will be stored. (note: do not end with a /).  If you change this location, squid needs to make a new cache, this could take a while</description>
 			<type>input</type>
 			<size>60</size>
-			<required/>
+
 			<default_value>/var/squid/cache</default_value>
+		</field>
+		<field>
+			<fielddescr>Object size</fielddescr>
+			<fieldname>max_min_size</fieldname>
+			<description>Object size in kilobyte. Max object size for coss and Min object size for aufs.</description>
+			<type>input</type>
+
+			<default_value>4</default_value>
 		</field>
 		<field>
 			<fielddescr>Memory cache size</fielddescr>
@@ -129,10 +157,10 @@
 		<field>
 			<fielddescr>Maximum object size</fielddescr>
 			<fieldname>maximum_object_size</fieldname>
-			<description>Objects larger than the size specified (in kilobytes) will not be saved on disk. If you wish to increase speed more than you want to save bandwidth, this should be set to a low value.</description>
+			<description>Objects larger than the size specified (in megabytes) will not be saved on disk. If you wish to increase speed more than you want to save bandwidth, this should be set to a low value.</description>
 			<type>input</type>
-			<required/>
-			<default_value>4</default_value>
+
+			<default_value>32</default_value>
 		</field>
 		<field>
 			<fielddescr>Level 1 subdirectories</fielddescr>
@@ -211,13 +239,28 @@
 		if($_POST['harddisk_cache_size'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_size']) {
 			$needs_dash_z = true;
 		}
+		if($_POST['harddisk_cache_system'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']) {
+			$needs_dash_z = true;
+		}
 	</custom_php_command_before_form>
 	<custom_php_validation_command>
 		squid_validate_cache($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
+	<custom_php_after_form_command>
+		cache_system_changed_javascript();
+	</custom_php_after_form_command>
 	<custom_php_resync_config_command>
 		squid_resync();
-		if($needs_dash_z)
+		if($needs_dash_z){
+		log_error("squid_cache needs squid -z");
 			squid_dash_z();
+			}
+		log_error("squid_cache.xml resynced");	
 	</custom_php_resync_config_command>
+	<custom_php_before_form_command>
+		cache_system_changed_javascript();
+	</custom_php_before_form_command>
+	<custom_php_after_head_command>
+		cache_system_changed_java_body();
+	</custom_php_after_head_command>
 </packagegui>

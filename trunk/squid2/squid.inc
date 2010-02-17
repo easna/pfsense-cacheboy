@@ -4,7 +4,7 @@
 	squid.inc
 	Copyright (C) 2006-2009 Scott Ullrich
 	Copyright (C) 2006 Fernando Lemos
-	Copyright (C) 2008 Martin Fuchs	
+	Copyright (C) 2008 Martin Fuchs
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ require_once('pfsense-utils.inc');
 require_once('pkg-utils.inc');
 require_once('service-utils.inc');
 
-if(!function_exists("filter_configure")) 
+if(!function_exists("filter_configure"))
 	require_once("filter.inc");
 
 define('SQUID_CONFBASE', '/usr/local/etc/squid');
@@ -56,6 +56,8 @@ function squid_get_real_interface_address($iface) {
 }
 
 function squid_chown_recursive($dir, $user, $group) {
+	if(file_exists($dir))
+	mwexec("/bin/rm -f $dir");
 	chown($dir, $user);
 	chgrp($dir, $group);
 	$handle = opendir($dir) ;
@@ -76,25 +78,39 @@ function squid_chown_recursive($dir, $user, $group) {
 function squid_dash_z() {
 	global $config;
 	$settings = $config['installedpackages']['squidcache']['config'][0];
-	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$cosscachedir = ($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
+	$hddsystem = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : "aufs");
+	
+	if ($hddsystem == "coss" || $hddsystem == "coss+aufs") {
+	$coss = "on";
+	if (!file_exists("$cosscachedir/coss")) {
+		log_error("Creating Squid cache coss dir $cosscachedir");
+		make_dirs($cosscachedir);
+		squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
+	}
+	}
 
-	if(!is_dir($cachedir.'/')) {
+	if ($hddsystem == "aufs" || $hddsystem == "coss+aufs") {
+	$aufs = "on";
+	if (!is_dir($cachedir.'/')) {
 		log_error("Creating Squid cache dir $cachedir");
 		make_dirs($cachedir);
 		squid_chown_recursive($cachedir, 'proxy', 'proxy');
 	}
+	}
 
-	if(!is_dir($cachedir.'/00/')) {
-		log_error("Creating squid cache subdirs in $cachedir");
+ 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
+		log_error("Creating squid cache dir and files");
 		mwexec("/usr/local/sbin/squid -k shutdown");
 		sleep(5);
 		mwexec("/usr/local/sbin/squid -k kill");
 		mwexec("/usr/local/sbin/squid -z");
 	}
-
-	if(file_exists("$cachedir/swap.state"))
+	
+	if (file_exists("$cachedir/swap.state"))
 		exec("chmod a+rw $cachedir/swap.state");
-
+	log_error("squid_dash_z done");
 }
 
 function squid_is_valid_acl($acl) {
@@ -176,14 +192,10 @@ function squid_install_command() {
 			$config['installedpackages']['squidnac']['config'][0]['blacklist'] = $settingsnac['blacklist'];
 		}
 	}
-	
-	update_status("Writing configuration... One moment please...");
-	
-	write_config();
 
-	/* create cache */
-	update_status("Creating squid cache pools... One moment please...");
-	squid_dash_z();
+	update_status("Writing configuration... One moment please...");
+
+	write_config();
 	/* make sure pinger is executable */
 	if(file_exists("/usr/local/libexec/squid/pinger"))
 		exec("/bin/chmod a+x /usr/local/libexec/squid/pinger");
@@ -224,7 +236,7 @@ EOD;
 	exec("chmod a+rx /usr/local/libexec/squid/dnsserver");
 
 	foreach (array(	SQUID_CONFBASE,
-			SQUID_ACLDIR,
+			SQUID_ACLDIR, "/var/squid/log"
 	) as $dir) {
 			make_dirs($dir);
 			squid_chown_recursive($dir, 'proxy', 'proxy');
@@ -239,25 +251,16 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	update_status("Checking cache... One moment please...");
-	squid_dash_z();
-
-	if (!is_service_running('squid')) {
-		update_status("Starting... One moment please...");
-		log_error("Starting Squid");
-		mwexec_bg("/usr/local/sbin/squid -D");
-	} else {
-		update_status("Reloading Squid for configuration sync... One moment please...");
-		log_error("Reloading Squid for configuration sync");
-		mwexec("/usr/local/sbin/squid -k reconfigure");
-	}
-
+/* 	update_status("sync config... One moment please...");
+	log_error("squid_resync");
+	squid_resync(); */
+	
 	/* restart proxy alarm scripts */
-	log_error("Starting a proxy monitor script");
-	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh");
+/*   	log_error("Starting a proxy monitor script");
+	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
 
-	update_status("Reconfiguring filter... One moment please...");
-	filter_configure();
+/* 	update_status("Reconfiguring filter... One moment please...");
+ 	filter_configure(); */
 }
 
 function squid_deinstall_command() {
@@ -266,17 +269,19 @@ function squid_deinstall_command() {
 	squid_install_cron(false);
 	$settings = &$config['installedpackages']['squidcache']['config'][0];
 	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
-	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
-	update_status("Removing swap.state ... One moment please...");
+	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
+	$logdir = ($settings2['log_dir'] ? $settings2['log_dir'] : '/var/squid/log');
 	update_output_window("$plswait_txt");
-	mwexec('rm -rf $cachedir/swap.state');
-	mwexec('rm -rf $logdir');
 	update_status("Finishing package cleanup.");
-	mwexec('rm -f /usr/local/etc/rc.d/proxy_monitor.sh');
 	mwexec("ps awux | grep \"proxy_monitor\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
 	mwexec("ps awux | grep \"squid\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
 	mwexec("ps awux | grep \"dnsserver\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
 	mwexec("ps awux | grep \"unlinkd\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
+	mwexec("rm -rf $logdir");
+/* 	mwexec("rm -rf $cachedir");
+	mwexec("rm -rf $cachedir2");
+	mwexec("rm -rf /var/squid"); */
+	mwexec('rm -f /usr/local/etc/rc.d/proxy_monitor.sh');
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
@@ -339,10 +344,10 @@ function squid_validate_general($post, $input_errors) {
 	if (($post['transparent_proxy'] != 'on') && ($post['private_subnet_proxy_off'] == 'on')) {
 		$input_errors[] = "You can not bypass traffic to private subnets  without using the transparent proxy.";
 	}
-	
+
 	if (($post['transparent_proxy'] != 'on') && !empty($post['defined_ip_proxy_off'])) {
 		$input_errors[] = "You can not bypass traffic from specific IPs without using the transparent proxy.";
-	}	
+	}
 
 	foreach (array('defined_ip_proxy_off') as $hosts) {
 		foreach (explode(";", $post[$hosts]) as $host) {
@@ -383,9 +388,11 @@ function squid_validate_upstream($post, $input_errors) {
 }
 
 function squid_validate_cache($post, $input_errors) {
-	$num_fields = array(	'harddisk_cache_size' => 'Hard disk cache size',
+//	$cache_system = $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']
+// 'harddisk_cache_size' => 'Hard disk cache size', 				'maximum_object_size' => 'Maximum object size',
+	$num_fields = array(	
 				'memory_cache_size' => 'Memory cache size',
-				'maximum_object_size' => 'Maximum object size',
+
 	);
 	foreach ($num_fields as $field => $name) {
 		$value = trim($post[$field]);
@@ -403,10 +410,10 @@ function squid_validate_cache($post, $input_errors) {
 	  $input_errors[] = 'You must enter a valid value for \'Low-water-mark\'';
 	}
 
-  if (!empty($post['cache_swap_high'])) {		
+  if (!empty($post['cache_swap_high'])) {
 	 $value = trim($post['cache_swap_high']);
 	 if (!is_numeric($value) || ($value > 100))
-		$input_errors[] = 'You must enter a valid value for \'High-water-mark\'';		
+		$input_errors[] = 'You must enter a valid value for \'High-water-mark\'';
   }
 
 	if ($post['donotcache'] != "") {
@@ -471,23 +478,23 @@ function squid_validate_traffic($post, $input_errors) {
 			$input_errors[] = "The field '$name' must contain a positive number";
 	}
 
-  if (!empty($post['quick_abort_min'])) {		
+  if (!empty($post['quick_abort_min'])) {
 	 $value = trim($post['quick_abort_min']);
      if (!is_numeric($value))
-	   $input_errors[] = "The field 'Finish when remaining KB' must contain a positive number";	
-  }	
-  
-  if (!empty($post['quick_abort_max'])) {		
+	   $input_errors[] = "The field 'Finish when remaining KB' must contain a positive number";
+  }
+
+  if (!empty($post['quick_abort_max'])) {
 	 $value = trim($post['quick_abort_max']);
      if (!is_numeric($value))
-	   $input_errors[] = "The field 'Abort when remaining KB' must contain a positive number";	
-  }	
-		
-  if (!empty($post['quick_abort_pct'])) {		
+	   $input_errors[] = "The field 'Abort when remaining KB' must contain a positive number";
+  }
+
+  if (!empty($post['quick_abort_pct'])) {
 	 $value = trim($post['quick_abort_pct']);
      if (!is_numeric($value) || ($value > 100))
-	   $input_errors[] = "The field 'Finish when remaining %' must contain a percentaged value";	
-  }	
+	   $input_errors[] = "The field 'Finish when remaining %' must contain a percentaged value";
+  }
 
 }
 
@@ -545,7 +552,7 @@ function squid_validate_auth($post, $input_errors) {
 
 function squid_install_cron($should_install) {
 	global $config, $g;
-	if($g['booting']==true) 
+	if($g['booting']==true)
 		return;
 	$is_installed = false;
 	if(!$config['cron']['item'])
@@ -568,7 +575,7 @@ function squid_install_cron($should_install) {
 				$cron_item['month'] = "*";
 				$cron_item['wday'] = "*";
 				$cron_item['who'] = "root";
-				$cron_item['command'] = "/usr/local/sbin/squid -k rotate";		
+				$cron_item['command'] = "/usr/local/sbin/squid -k rotate";
 				$config['cron']['item'][] = $cron_item;
 				parse_config(true);
 				write_config("Squid Log Rotation");
@@ -596,16 +603,19 @@ function squid_resync_general() {
 	$conf = "# Do not edit manually !\n";
 
 	$port = ($settings['proxy_port'] ? $settings['proxy_port'] : 3128);
+	if ($settings['enable_http11'] == 'on') {
+	$http_port_options = "http11";
+	}
 	$ifaces = ($settings['active_interface'] ? $settings['active_interface'] : 'lan');
 	$real_ifaces = array();
 	foreach (explode(",", $ifaces) as $i => $iface) {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
 		if($real_ifaces[$i][0]) {
-			$conf .= "http_port {$real_ifaces[$i][0]}:$port\n";
+			$conf .= "http_port {$real_ifaces[$i][0]}:$port $http_port_options\n";
 		}
 	}
 	if (($settings['transparent_proxy'] == 'on')) {
-		$conf .= "http_port 127.0.0.1:80 transparent\n";
+		$conf .= "http_port 127.0.0.1:80 transparent $http_port_options\n";
 	}
 	$icp_port = ($settings['icp_port'] ? $settings['icp_port'] : 0);
 
@@ -620,7 +630,8 @@ function squid_resync_general() {
 
 	$logdir_cache = $logdir . '/cache.log';
 	$logdir_access = ($settings['log_enabled'] == 'on' ? $logdir . '/access.log' : '/dev/null');
-
+	
+	
 	$conf .= <<<EOD
 icp_port $icp_port
 
@@ -663,6 +674,7 @@ EOD;
 	}
 	if ($settings['disable_xforward']) $conf .= "forwarded_for off\n";
 	if ($settings['disable_via']) $conf .= "via off\n";
+	if ($settings['enable_http11']) $conf .= "server_http11 on\n";
 	if ($settings['disable_squidversion']) $conf .= "httpd_suppress_version_string on\n";
 	if (!empty($settings['uri_whitespace'])) $conf .= "uri_whitespace {$settings['uri_whitespace']}\n";
   else $conf .= "uri_whitespace strip\n"; //only used for first run
@@ -675,36 +687,59 @@ EOD;
 	 }
 //  $conf .= "\n";  //Kill blank line after DNS-Servers
    }
-	
+
   return $conf;
 }
 
+function cache_system_changed_javascript() {
+	print("<script language=\"JavaScript\">cache_system_changed()</script>\n");
+}
 
 function squid_resync_cache() {
 	global $config;
 
 	$settings = $config['installedpackages']['squidcache']['config'][0];
 
-	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$cosscachedir = ($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
+	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$coss_disk_cache_size = ($settings['coss_harddisk_cache_size'] ? $settings['coss_harddisk_cache_size'] : 50);
 	$disk_cache_size = ($settings['harddisk_cache_size'] ? $settings['harddisk_cache_size'] : 100);
 	$disk_cache_system = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : 'aufs');
+	$object_size = (($settings['max_min_size'] ? $settings['max_min_size'] : 4) * 1024);
 	$level1 = ($settings['level1_subdirs'] ? $settings['level1_subdirs'] : 16);
 	$memory_cache_size = ($settings['memory_cache_size'] ? $settings['memory_cache_size'] : 8);
-	$max_objsize = ($settings['maximum_object_size'] ? $settings['maximum_object_size'] : 204800);
+	$max_objsize = ($settings['maximum_object_size'] ? $settings['maximum_object_size'] : 32);
 	$min_objsize = ($settings['minimum_object_size'] ? $settings['minimum_object_size'] : 0);
 	$cache_policy = ($settings['cache_replacement_policy'] ? $settings['cache_replacement_policy'] : 'heap LFUDA');
 	$memory_policy = ($settings['memory_replacement_policy'] ? $settings['memory_replacement_policy'] : 'heap GDSF');
 	$offline_mode = ($settings['enable_offline'] == 'on' ? 'on' : 'off');
+	if ($disk_cache_system == "null") {
+	$cache_dir = "cache_dir null /tmp";
+	}
+	elseif ($disk_cache_system == "custom") {
+	$cache_dir = "include /usr/local/etc/squid/dir.conf";
+	}
+	elseif ($disk_cache_system == "coss+aufs") {
+	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size";
+	$cache_dir = "cache_dir aufs $cachedir $disk_cache_size $level1 256 min-size=$object_size";
+	}
+	elseif ($disk_cache_system == "aufs") {
+	$cache_dir = "cache_dir aufs $cachedir $disk_cache_size $level1 256";
+	}
+	elseif ($disk_cache_system == "coss") {
+	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size";
+	}
 
 	$conf = <<<EOD
+
 cache_mem $memory_cache_size MB
-maximum_object_size_in_memory 32 KB
+maximum_object_size_in_memory 4 KB
 memory_replacement_policy $memory_policy
 cache_replacement_policy $cache_policy
-include /usr/local/etc/squid/dir.conf
-#cache_dir $disk_cache_system $cachedir $disk_cache_size $level1 256
+$cache_coss_dir
+$cache_dir
 minimum_object_size $min_objsize KB
-maximum_object_size $max_objsize KB
+maximum_object_size $max_objsize MB
 offline_mode $offline_mode
 
 EOD;
@@ -721,8 +756,75 @@ EOD;
 	elseif (file_exists(SQUID_ACLDIR . '/donotcache.acl')) {
      unlink(SQUID_ACLDIR . '/donotcache.acl');
     }
-  
+
 	return $conf;
+}
+
+function cache_system_changed_java_body() {
+	global $config;
+	$settings = $config['installedpackages']['squidcache']['config'][0];
+	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$cachedirsize = ($settings['harddisk_cache_size'] ? $settings['harddisk_cache_size'] : '100');
+	$coss_disk_cache_size = ($settings['coss_harddisk_cache_size'] ? $settings['coss_harddisk_cache_size'] : 50);
+	$cosscachedir = ($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
+	$max_min_size = ($settings['max_min_size'] ? $settings['max_min_size'] : 4);
+
+		$javascript = <<<EOD
+<script language="JavaScript">
+<!--
+function cache_system_changed() {
+	var field = document.iform.harddisk_cache_system;
+	var harddisk_cache_system = field.options[field.selectedIndex].value;
+			document.iform.harddisk_cache_location.value = "$cachedir";
+			document.iform.harddisk_cache_size.value = "$cachedirsize";
+			document.iform.coss_harddisk_cache_size.value = "$coss_disk_cache_size";
+			document.iform.coss_harddisk_cache_location.value = "$cosscachedir";
+			document.iform.max_min_size.value = "$max_min_size";
+	switch (harddisk_cache_system) {
+		case 'null':
+			document.iform.coss_harddisk_cache_size.disabled = 1;
+			document.iform.coss_harddisk_cache_location.disabled = 1;
+			document.iform.harddisk_cache_size.disabled = 1;
+			document.iform.harddisk_cache_location.disabled = 1;
+			document.iform.max_min_size.disabled = 1;
+			break;
+		case 'aufs':
+			document.iform.coss_harddisk_cache_size.disabled = 1;
+			document.iform.coss_harddisk_cache_location.disabled = 1;
+			document.iform.harddisk_cache_size.disabled = 0;
+			document.iform.harddisk_cache_location.disabled = 0;
+			document.iform.max_min_size.disabled = 1;			
+			break;
+		case 'coss+aufs':
+			document.iform.coss_harddisk_cache_size.disabled = 0;
+			document.iform.coss_harddisk_cache_location.disabled = 0;
+			document.iform.harddisk_cache_size.disabled = 0;
+			document.iform.harddisk_cache_location.disabled = 0;
+			document.iform.max_min_size.disabled = 0;
+			break;
+		case 'coss':
+			document.iform.coss_harddisk_cache_size.disabled = 0;
+			document.iform.coss_harddisk_cache_location.disabled = 0;
+			document.iform.harddisk_cache_size.disabled = 1;
+			document.iform.harddisk_cache_location.disabled = 1;
+			document.iform.max_min_size.disabled = 0;	
+			break;
+		case 'custom':
+			document.iform.coss_harddisk_cache_size.disabled = 1;
+			document.iform.coss_harddisk_cache_location.disabled = 1;
+			document.iform.harddisk_cache_size.disabled = 1;
+			document.iform.harddisk_cache_location.disabled = 1;
+			document.iform.max_min_size.disabled = 1;
+			break;
+	}
+}
+-->
+</script>
+
+EOD;
+
+
+	print($javascript);
 }
 
 function squid_resync_upstream() {
@@ -828,9 +930,9 @@ EOD;
     $conf .= "http_access allow manager ext_manager_".$count."\n";
     $count += 1;
 	 }}
-	
+
   $conf .= <<<EOD
-  
+
 http_access deny manager
 http_access allow purge localhost
 http_access deny purge
@@ -854,13 +956,14 @@ function squid_resync_traffic() {
 
   if (!empty($settings['quick_abort_min']) || ($settings['quick_abort_min']) == "0") $conf .= "quick_abort_min {$settings['quick_abort_min']} KB\n";
   if (!empty($settings['quick_abort_max']) || ($settings['quick_abort_max']) == "0") $conf .= "quick_abort_max {$settings['quick_abort_max']} KB\n";
-  if (!empty($settings['quick_abort_pct'])) $conf .= "quick_abort_pct {$settings['quick_abort_pct']}\n";	
+  if (!empty($settings['quick_abort_pct'])) $conf .= "quick_abort_pct {$settings['quick_abort_pct']}\n";
 
 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);
-	$conf .= "request_body_max_size $up_limit KB\n";
+	$perbody = ($settings['bodymaxsize_throttling'] ? $settings['bodymaxsize_throttling'] : 0);
+	$conf .= 'request_body_max_size ' . ($up_limit * 1024) . " allow all\n";
 
-	$conf .= 'reply_body_max_size ' . ($down_limit * 1024) . " allow all\n";
+	$conf .= 'reply_body_max_size ' . ($down_limit * 1024) . " deny all\n";
 
 	// Only apply throttling past 10MB
 	// XXX: Should this really be hardcoded?
@@ -919,7 +1022,8 @@ EOD;
 	}
 	else
 		$conf .= "delay_access 1 allow all\n";
-		$conf .= "delay_body_max_size 32768 1 allow all\n";
+		if ( $perbody != 0 )
+		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
 
 	return $conf;
 }
@@ -1096,22 +1200,22 @@ function squid_resync() {
 
 	file_put_contents(SQUID_CONFBASE . '/squid.conf', $conf);
 
-	$log_dir = $config['installedpackages']['squid']['config'][0]['log_dir'].'/';
+	$log_dir = $config['installedpackages']['squid']['config'][0]['log_dir'];
 
-	if(!is_dir($log_dir)) {
+	if(!is_dir($log_dir.'/')) {
 		log_error("Creating squid log dir $log_dir");
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
 
 	squid_dash_z();
-
-	if (!is_service_running('squid')) {
-		log_error("Starting Squid");
-		mwexec_bg("/usr/local/sbin/squid -D");
-	} else {
-		log_error("Reloading Squid for configuration sync");
+	
+	if (is_service_running('squid')) {
+		log_error("squid_resync: Reloading Squid for configuration sync");
 		mwexec("/usr/local/sbin/squid -k reconfigure");
+	} else {
+		log_error("squid_resync: Starting Squid");
+		mwexec_bg("/usr/local/sbin/squid -D");
 	}
 
 	filter_configure();
@@ -1246,7 +1350,7 @@ function squid_generate_rules($type) {
 
 	$squid_conf = $config['installedpackages']['squid']['config'][0];
 	if (!is_service_running('squid')) {
-		log_error("SQUID is installed but not started.  Not installing redirect rules.");
+		log_error("lusca-cache is installed but not started.  Not installing redirect rules.");
 		return;
 	}
 
@@ -1261,19 +1365,19 @@ function squid_generate_rules($type) {
 	$fw_aliases = filter_generate_aliases();
 	if(strstr($fw_aliases, "pptp ="))
 		$PPTP_ALIAS = "\$pptp";
-	else 
+	else
 		$PPTP_ALIAS = "\$PPTP";
 	if(strstr($fw_aliases, "PPPoE ="))
 		$PPPOE_ALIAS = "\$PPPoE";
-	else 
+	else
 		$PPPOE_ALIAS = "\$pppoe";
-		
+
 	switch($type) {
 		case 'nat':
 			$rules .= "\n# Setup Squid proxy redirect\n";
 			if ($squid_conf['private_subnet_proxy_off'] == 'on') {
 				foreach ($ifaces as $iface) {
-					$rules .= "no rdr on $iface proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port 80\n";         
+					$rules .= "no rdr on $iface proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port 80\n";
 				}
 			}
 			if (!empty($squid_conf['defined_ip_proxy_off'])) {
@@ -1287,9 +1391,9 @@ function squid_generate_rules($type) {
 				}
 				$exempt_ip = substr($exempt_ip,2);
 				foreach ($ifaces as $iface) {
-					$rules .= "no rdr on $iface proto tcp from { $exempt_ip } to any port 80\n";         
-				}          
-			}     
+					$rules .= "no rdr on $iface proto tcp from { $exempt_ip } to any port 80\n";
+				}
+			}
 			foreach ($ifaces as $iface) {
 				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
 			}
@@ -1312,8 +1416,8 @@ function squid_generate_rules($type) {
 				$rules .= "\n";
 			};
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
-				$rules .= "pass in quick on $PPPOE_ALIAS proto tcp from any to !127.0.0.1 port $port flags S/SA keep state\n";			
-			}			
+				$rules .= "pass in quick on $PPPOE_ALIAS proto tcp from any to !127.0.0.1 port $port flags S/SA keep state\n";
+			}
 			if($config['pptpd']['mode'] == "server" && $config['pptpd']['localip']) {
 				$rules .= "pass in quick on $PPTP_ALIAS proto tcp from any to !127.0.0.1 port $port flags S/SA keep state\n";
 			}
