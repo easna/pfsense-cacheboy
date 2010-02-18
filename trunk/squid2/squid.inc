@@ -267,10 +267,10 @@ function squid_deinstall_command() {
 	global $config, $g;
 	$plswait_txt = "This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.";
 	squid_install_cron(false);
-	$settings = &$config['installedpackages']['squidcache']['config'][0];
-	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
-	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
-	$logdir = ($settings2['log_dir'] ? $settings2['log_dir'] : '/var/squid/log');
+ 	$settings = &$config['installedpackages']['squid']['config'][0];
+/* 	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
+	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid'); */
+	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
 	update_output_window("$plswait_txt");
 	update_status("Finishing package cleanup.");
 	mwexec("ps awux | grep \"proxy_monitor\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
@@ -390,19 +390,15 @@ function squid_validate_upstream($post, $input_errors) {
 function squid_validate_cache($post, $input_errors) {
 //	$cache_system = $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']
 // 'harddisk_cache_size' => 'Hard disk cache size', 				'maximum_object_size' => 'Maximum object size',
-	$num_fields = array(	
-				'memory_cache_size' => 'Memory cache size',
+	$num_fields = array(	'memory_cache_size' => 'Memory cache size', 'minimum_object_size' => 'Minimum object size', 'mem_object_size' => 'Max memory object size', 
+				'memory_cache_size' => 'Memory cache size'
 
 	);
 	foreach ($num_fields as $field => $name) {
 		$value = trim($post[$field]);
 		if (!is_numeric($value) || ($value < 0))
-			$input_errors[] = "You must enter a valid value for '$field'";
+			$input_errors[] = "You must enter a valid value for '$name'";
 	}
-
-	$value = trim($post['minimum_object_size']);
-	if (!is_numeric($value) || ($value < 0))
-		$input_errors[] = 'You must enter a valid value for \'Minimum object size\'';
 
   if (!empty($post['cache_swap_low'])) {
     $value = trim($post['cache_swap_low']);
@@ -710,6 +706,7 @@ function squid_resync_cache() {
 	$memory_cache_size = ($settings['memory_cache_size'] ? $settings['memory_cache_size'] : 8);
 	$max_objsize = ($settings['maximum_object_size'] ? $settings['maximum_object_size'] : 32);
 	$min_objsize = ($settings['minimum_object_size'] ? $settings['minimum_object_size'] : 0);
+	$max_mem_objsize = ($settings['mem_object_size'] ? $settings['mem_object_size'] : 4);
 	$cache_policy = ($settings['cache_replacement_policy'] ? $settings['cache_replacement_policy'] : 'heap LFUDA');
 	$memory_policy = ($settings['memory_replacement_policy'] ? $settings['memory_replacement_policy'] : 'heap GDSF');
 	$offline_mode = ($settings['enable_offline'] == 'on' ? 'on' : 'off');
@@ -733,7 +730,7 @@ function squid_resync_cache() {
 	$conf = <<<EOD
 
 cache_mem $memory_cache_size MB
-maximum_object_size_in_memory 4 KB
+maximum_object_size_in_memory $max_mem_objsize KB
 memory_replacement_policy $memory_policy
 cache_replacement_policy $cache_policy
 $cache_coss_dir
