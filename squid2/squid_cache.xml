@@ -84,7 +84,7 @@
 		<field>
 			<fielddescr>Hard disk cache system</fielddescr>
 			<fieldname>harddisk_cache_system</fieldname>
-			<description>This specifies the kind of storage system to use. &lt;p&gt; &lt;b&gt; aufs &lt;/b&gt; uses POSIX-threads to avoid blocking the main Squid process on disk-I/O. (Formerly known as async-io.) &lt;p&gt; &lt;b&gt; null &lt;/b&gt; will not store contents. &lt;p&gt; &lt;b&gt; coss &lt;/b&gt; a high performance for small contents. &lt;p&gt; &lt;b&gt; custom &lt;/b&gt; all configurations above be ignore your cache_dir will be at /usr/local/etc/squid/dir.conf</description>
+			<description>This specifies the kind of storage system to use. &lt;p&gt; &lt;b&gt; aufs &lt;/b&gt; uses POSIX-threads to avoid blocking the main Squid process on disk-I/O. (best for large files.) &lt;p&gt; &lt;b&gt; null &lt;/b&gt; will not store contents (only cache_mem will be used). &lt;p&gt; &lt;b&gt; coss &lt;/b&gt; highist performance container for small contents. &lt;p&gt; &lt;b&gt; custom &lt;/b&gt; all cache_dir configurations will be at /usr/local/etc/squid/dir.conf</description>
 			<type>select</type>
 			<options>
 				<option><name>aufs</name><value>aufs</value></option>
@@ -149,15 +149,23 @@
 		<field>
 			<fielddescr>Minimum object size</fielddescr>
 			<fieldname>minimum_object_size</fieldname>
-			<description>Objects smaller than the size specified (in kilobytes) will not be saved on disk. The default value is 0, meaning there is no minimum.</description>
+			<description>Objects smaller than the size specified (in kilobytes) will not be saved on disk cache. The default value is 0, meaning there is no minimum.</description>
 			<type>input</type>
 			<required />
 			<default_value>0</default_value>
 		</field>
 		<field>
+			<fielddescr>Max memory object size</fielddescr>
+			<fieldname>mem_object_size</fieldname>
+			<description>Objects larger than the size specified (in kilobytes) will not be saved on memory cache. The default value is 4.</description>
+			<type>input</type>
+			<required />
+			<default_value>4</default_value>
+		</field>
+		<field>
 			<fielddescr>Maximum object size</fielddescr>
 			<fieldname>maximum_object_size</fieldname>
-			<description>Objects larger than the size specified (in megabytes) will not be saved on disk. If you wish to increase speed more than you want to save bandwidth, this should be set to a low value.</description>
+			<description>Objects larger than the size specified (in megabytes) will not be saved on disk cache. If you wish to increase speed more than you want to save bandwidth, this should be set to a low value.</description>
 			<type>input</type>
 
 			<default_value>32</default_value>
@@ -236,7 +244,7 @@
 		</field>
 	</fields>
 	<custom_php_command_before_form>
-		if($_POST['harddisk_cache_size'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_size']) {
+		if($_POST['harddisk_cache_system'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']) {
 			$needs_dash_z = true;
 		}
 		if($_POST['harddisk_cache_system'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']) {
