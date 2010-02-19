@@ -96,72 +96,72 @@
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid.inc</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid.inc</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_cache.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_nac.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_nac.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_traffic.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_traffic.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_upstream.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_upstream.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_auth.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_auth.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_users.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_users.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/rc.d/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/proxy_monitor.sh</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/proxy_monitor.sh</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/squid_cache.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/lusca/include.conf</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/include.conf</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/lusca/refresh.conf</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/refresh.conf</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/lusca/storeurl.pl</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/storeurl.pl</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/lusca/refresh.conf</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/refresh.conf</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/etc/inc/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://bsd72/local/squid2/filter.diff</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/filter.diff</item>
 	</additional_files_needed>
 	<fields>
 		<field>
