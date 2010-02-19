@@ -18,6 +18,7 @@ Lusca r14371 patch r08. Patches applied:
   # Run this in console. _This will also remove some part of web GUI which is not needed when using transparent mode._
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/lusca.sh && chmod +x lusca.sh && ./lusca.sh
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/package.sh && chmod +x package.sh && ./package.sh
 }}}
 *Notes*<br>
 Configurations at:<br>
