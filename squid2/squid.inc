@@ -273,15 +273,20 @@ function squid_deinstall_command() {
 	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
 	update_output_window("$plswait_txt");
 	update_status("Finishing package cleanup.");
-	mwexec("ps awux | grep \"proxy_monitor\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
-	mwexec("ps awux | grep \"squid\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
-	mwexec("ps awux | grep \"dnsserver\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
-	mwexec("ps awux | grep \"unlinkd\" | grep -v \"grep\" | awk '{ print $2 }' | xargs kill");
 	mwexec("rm -rf $logdir");
-/* 	mwexec("rm -rf $cachedir");
-	mwexec("rm -rf $cachedir2");
-	mwexec("rm -rf /var/squid"); */
-	mwexec('rm -f /usr/local/etc/rc.d/proxy_monitor.sh');
+	
+	$num_fields = array( 'proxy_monitor','squid','dnsserver','unlinkd'
+	);
+	foreach ($num_fields as $field) {
+		$value = trim($post[$field]);
+		mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+	}
+	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
+	);
+	foreach ($num_fields2 as $field2) {
+		$value = trim($post[$field]);
+		unset($config['installedpackages']["$field2"]);
+	}
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
