@@ -8,11 +8,10 @@ Compiled with:<br>
 '--enable-pf-transparent' <br>
 '--enable-snmp' - _for MRTG_<br>
 
-Lusca r14371 patch r08. Patches applied:
-  # store-stale, ignore-must-revalidate
+Lusca-cache patched r10. Patches applied:
+  # ignore-must-revalidate
   # vary aware using storeurl
-  # redirect loop using storeurl
-  # save vary object other than COSS (vary index will lost on rebuild)
+  # save vary object/index other than COSS (vary index will be lost on rebuild if in coss)
 === Instruction ===
   # From your PfSense GUI run this at *Diagnostics* > *Command*.
 {{{
@@ -22,6 +21,6 @@ fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/package.sh && chmo
 
 *Notes*<br>
 Configurations at:<br>
-/usr/local/etc/squid/dir.conf - _cache directory, web GUI cache_dir will not be used for now. Use this instead_<br>
+/usr/local/etc/squid/dir.conf - _customized cache_dir if you might need it most case if you have more than one coss, aufs_<br>
 /usr/local/etc/squid/include.conf - _other squid configurations_<br>
 /usr/local/etc/squid/refresh.conf - _refresh patterns_<br>
