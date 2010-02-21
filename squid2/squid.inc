@@ -259,8 +259,9 @@ EOD;
 /*   	log_error("Starting a proxy monitor script");
 	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
 
-/* 	update_status("Reconfiguring filter... One moment please...");
- 	filter_configure(); */
+ 	update_status("Reconfiguring filter... One moment please...");
+ 	filter_configure();
+	mwexec(`sed s+'\(^kern.ipc.nmbclusters="0"\)+#\1'+ /boot/loader.conf > /boot/loader.conf.tmp && mv /boot/loader.conf.tmp /boot/loader.conf`);
 }
 
 function squid_deinstall_command() {
@@ -275,18 +276,21 @@ function squid_deinstall_command() {
 	update_status("Finishing package cleanup.");
 	mwexec("rm -rf $logdir");
 	
-	$num_fields = array( 'proxy_monitor','squid','dnsserver','unlinkd'
+	$num_fields = array( 'proxy_monitor','squid','dnsserver','unlinkd','storeurl.pl'
 	);
 	foreach ($num_fields as $field) {
 		$value = trim($post[$field]);
 		mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
 	}
-	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
+	// this part needs confirmations. this will solve the conflict with other versions
+/* 	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
 	);
 	foreach ($num_fields2 as $field2) {
 		$value = trim($post[$field]);
 		unset($config['installedpackages']["$field2"]);
 	}
+	mwexec("rm -rf $cachedir");
+	mwexec("rm -rf $cachedir2"); */
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
