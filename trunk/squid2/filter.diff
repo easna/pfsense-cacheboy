@@ -1,0 +1,20 @@
+--- /etc/inc/filterold.inc	2010-02-07 14:52:18.602237000 +0800
++++ /etc/inc/filter.inc	2010-02-07 13:00:19.000000000 +0800
+@@ -1281,7 +1281,7 @@
+ 		}
+ 	}
+ 
+-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
++	if ((is_package_installed('squid') || is_package_installed('lusca-cache')) && file_exists('/usr/local/pkg/squid.inc')) {
+ 		require_once('squid.inc');
+ 		$natrules .= squid_generate_rules('nat');
+ 	}
+@@ -2124,7 +2124,7 @@
+ 	$optcfg = array();
+ 	generate_optcfg_array($optcfg);
+ 
+-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
++	if ((is_package_installed('squid') || is_package_installed('lusca-cache')) && file_exists('/usr/local/pkg/squid.inc')) {
+ 		require_once('squid.inc');
+ 		$ipfrules .= squid_generate_rules('filter');
+ 	}
