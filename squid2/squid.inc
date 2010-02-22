@@ -261,7 +261,7 @@ EOD;
 
  	update_status("Reconfiguring filter... One moment please...");
  	filter_configure();
-	mwexec("sed s+'\(^kern.ipc.nmbclusters="0"\)+#\1'+ /boot/loader.conf > /boot/loader.conf.tmp && mv /boot/loader.conf.tmp /boot/loader.conf");
+	mwexec("sed s+'\(^kern.ipc.nmbclusters="0"\)+'#'\1'+ /boot/loader.conf > /boot/loader.conf.tmp && mv /boot/loader.conf.tmp /boot/loader.conf");
 }
 
 function squid_deinstall_command() {
