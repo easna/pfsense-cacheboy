@@ -258,10 +258,11 @@ EOD;
 	/* restart proxy alarm scripts */
 /*   	log_error("Starting a proxy monitor script");
 	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
+	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/\#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
+	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
+/*  	update_status("Reconfiguring filter... One moment please...");
+ 	filter_configure(); */
 
- 	update_status("Reconfiguring filter... One moment please...");
- 	filter_configure();
-	mwexec("sed s+'\(^kern.ipc.nmbclusters="0"\)'+#'\1'+ /boot/loader.conf > /boot/loader.conf.tmp && mv /boot/loader.conf.tmp /boot/loader.conf");
 }
 
 function squid_deinstall_command() {
