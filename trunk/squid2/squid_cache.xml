@@ -94,7 +94,7 @@
 				<option><name>custom</name><value>custom</value></option>
 			</options>
 			<onchange>cache_system_changed()</onchange>
-			<default_value>aufs</default_value>
+			<default_value>null</default_value>
 		</field>
 		<field>
 			<fielddescr>coss Hard disk cache size</fielddescr>
