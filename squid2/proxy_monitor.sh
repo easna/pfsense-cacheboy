@@ -36,8 +36,8 @@ if [ -f /var/run/squid_alarm ]; then
 fi
 
 # Sleep 5 seconds on startup not to mangle with existing boot scripts.
-sleep 10 
-# Squid monitor 2.0 
+sleep 5
+# Squid monitor 2.0
 while [ /bin/true ] ; do
         if [  ! -f /var/run/squid_alarm ]; then
                 NUM_PROCS=`ps auxw | grep "[s]quid -D" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'`
@@ -48,11 +48,12 @@ while [ /bin/true ] ; do
 						/etc/rc.filter_configure_sync
                         echo "Attempting restart..." | logger -p daemon.info -i -t Squid_Alarm
                         /usr/local/etc/rc.d/squid.sh start
-						#if error squid will retry 5 times for about 13secs trying to run squid child process.
-                        sleep 20 
+						# if error squid will retry 5 times for about 13secs trying to run squid child process.
+                        sleep 20
                         touch /var/run/squid_alarm
                 fi
         fi
+		# This time we will be waiting until squid -D process will start, since attempt to start is a failure
         NUM_PROCS=`ps auxw | grep "(squid) -D"| grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'`
         if [ $NUM_PROCS -gt 0 ]; then
                 if [ -f /var/run/squid_alarm ]; then

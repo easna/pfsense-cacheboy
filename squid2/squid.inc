@@ -81,7 +81,7 @@ function squid_dash_z() {
 	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
 	$cosscachedir = ($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
 	$hddsystem = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : "aufs");
-	
+
 	if ($hddsystem == "coss" || $hddsystem == "coss+aufs") {
 	$coss = "on";
 	if (!file_exists("$cosscachedir/coss")) {
@@ -103,11 +103,14 @@ function squid_dash_z() {
  	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
 		log_error("Creating squid cache dir and files");
 		mwexec("/usr/local/sbin/squid -k shutdown");
-		sleep(5);
-		mwexec("/usr/local/sbin/squid -k kill");
+		while (is_service_running('squid')) {
+		log_error("Waiting squid to shutdown");
+		sleep(2);
+	}
+/* 		mwexec("/usr/local/sbin/squid -k kill"); */
 		mwexec("/usr/local/sbin/squid -z");
 	}
-	
+
 	if (file_exists("$cachedir/swap.state"))
 		exec("chmod a+rw $cachedir/swap.state");
 	log_error("squid_dash_z done");
@@ -204,17 +207,22 @@ function squid_install_command() {
 	$rc = array();
 	$rc['file'] = 'squid.sh';
 	$rc['start'] = <<<EOD
-if [ -z "`ps auxw | grep "[s]quid -D"|awk '{print $2}'`" ];then
+
+if [ -z "`ps auxw | grep "[s]quid -D" | grep -v grep | awk '{print $2}'`" ];then
 	/usr/local/sbin/squid -D
 fi
-if [ -z "`ps -auxw | grep proxy_monitor.sh |awk '{print $2}'`" ];then
+if [ -z "`ps -auxw | grep proxy_monitor.sh | grep -v grep |awk '{print $2}'`" ];then
 	/usr/local/etc/rc.d/proxy_monitor.sh start &
 fi
+/etc/rc.filter_configure_sync
+echo "Reconfiguring filter...done" | logger -p daemon.info -i -t squid.sh
 
 EOD;
 	$rc['stop'] = <<<EOD
+
 kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
 /usr/local/sbin/squid -k shutdown
+/etc/rc.filter_configure_sync
 while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
         echo 'please wait...squid still shutting down'
         sleep 5
@@ -251,17 +259,19 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-/* 	update_status("sync config... One moment please...");
-	log_error("squid_resync");
-	squid_resync(); */
-	
 	/* restart proxy alarm scripts */
-/*   	log_error("Starting a proxy monitor script");
-	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
-	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/\#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
-	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
-/*  	update_status("Reconfiguring filter... One moment please...");
- 	filter_configure(); */
+  	log_error("Starting a proxy monitor script");
+	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh");
+
+ 	update_status("sync config... One moment please...");
+	log_error("squid_resync");
+	squid_resync();
+
+/* 	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/\#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
+	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf"); */
+  	update_status("Reconfiguring filter... One moment please...");
+ 	filter_configure();
+	update_status("Reconfiguring filter... completed!");
 
 }
 
@@ -276,7 +286,7 @@ function squid_deinstall_command() {
 	update_output_window("$plswait_txt");
 	update_status("Finishing package cleanup.");
 	mwexec("rm -rf $logdir");
-	
+
 	$num_fields = array( 'proxy_monitor','squid','dnsserver','unlinkd','storeurl.pl'
 	);
 	foreach ($num_fields as $field) {
@@ -400,7 +410,7 @@ function squid_validate_upstream($post, $input_errors) {
 function squid_validate_cache($post, $input_errors) {
 //	$cache_system = $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']
 // 'harddisk_cache_size' => 'Hard disk cache size', 				'maximum_object_size' => 'Maximum object size',
-	$num_fields = array(	'memory_cache_size' => 'Memory cache size', 'minimum_object_size' => 'Minimum object size', 'mem_object_size' => 'Max memory object size', 
+	$num_fields = array(	'memory_cache_size' => 'Memory cache size', 'minimum_object_size' => 'Minimum object size', 'mem_object_size' => 'Max memory object size',
 				'memory_cache_size' => 'Memory cache size'
 
 	);
@@ -636,8 +646,8 @@ function squid_resync_general() {
 
 	$logdir_cache = $logdir . '/cache.log';
 	$logdir_access = ($settings['log_enabled'] == 'on' ? $logdir . '/access.log' : '/dev/null');
-	
-	
+
+
 	$conf .= <<<EOD
 icp_port $icp_port
 
@@ -800,7 +810,7 @@ function cache_system_changed() {
 			document.iform.coss_harddisk_cache_location.disabled = 1;
 			document.iform.harddisk_cache_size.disabled = 0;
 			document.iform.harddisk_cache_location.disabled = 0;
-			document.iform.max_min_size.disabled = 1;			
+			document.iform.max_min_size.disabled = 1;
 			break;
 		case 'coss+aufs':
 			document.iform.coss_harddisk_cache_size.disabled = 0;
@@ -814,7 +824,7 @@ function cache_system_changed() {
 			document.iform.coss_harddisk_cache_location.disabled = 0;
 			document.iform.harddisk_cache_size.disabled = 1;
 			document.iform.harddisk_cache_location.disabled = 1;
-			document.iform.max_min_size.disabled = 0;	
+			document.iform.max_min_size.disabled = 0;
 			break;
 		case 'custom':
 			document.iform.coss_harddisk_cache_size.disabled = 1;
@@ -1215,14 +1225,17 @@ function squid_resync() {
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
 
-	squid_dash_z();
-	
+/* 	squid_dash_z(); */
+
+	/* if proxy_monitor.sh is not running then this is an .xml startup which is trying to sync all .xml */
+	if (is_process_running('proxy_monitor.sh')) {
 	if (is_service_running('squid')) {
 		log_error("squid_resync: Reloading Squid for configuration sync");
 		mwexec("/usr/local/sbin/squid -k reconfigure");
 	} else {
-		log_error("squid_resync: Starting Squid");
+		log_error("squid_resync(): Starting Squid");
 		mwexec_bg("/usr/local/sbin/squid -D");
+	}
 	}
 
 	filter_configure();
