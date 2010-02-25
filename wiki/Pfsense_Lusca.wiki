@@ -24,3 +24,22 @@ Configurations at:<br>
 /usr/local/etc/squid/dir.conf - _customized cache_dir if you might need it most case if you have more than one coss, aufs_<br>
 /usr/local/etc/squid/include.conf - _other squid configurations_<br>
 /usr/local/etc/squid/refresh.conf - _refresh patterns_<br>
+
+*Troubleshoot:*<br>
+Pfsense GUI's doesn't save your configurations<br>
+Causes:
+  * Previous squid packages and scripts doesn't clean up properly(pfsense limitation).
+  * config.xml is already dirty as well as your previous installation had already been compromised.
+Fixed:<br>
+Run this at *Diagnostics: Execute command* > *PHP execute*<br>
+{{{
+$num_fields = array('squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers');
+foreach ($num_fields as $field)
+unset($config['installedpackages']["$field"]);
+write_config();
+}}}
+for selective approach where *squidcache* of URL _http://pfsense/pkg_edit.php?xml=squid_cache.xml&id=0_ as an example that usually doesn't save.<br>
+{{{
+unset($config['installedpackages'][squidcache]);
+write_config();
+}}}
