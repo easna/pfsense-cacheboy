@@ -80,40 +80,46 @@ function squid_dash_z() {
 	$settings = $config['installedpackages']['squidcache']['config'][0];
 	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
 	$cosscachedir = ($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
-	$hddsystem = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : "aufs");
+	$hddsystem = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : 'null');
 
 	if ($hddsystem == "coss" || $hddsystem == "coss+aufs") {
 	$coss = "on";
-	if (!file_exists("$cosscachedir/coss")) {
-		log_error("Creating Squid cache coss dir $cosscachedir");
-		make_dirs($cosscachedir);
-		squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
-	}
+		if (!file_exists("$cosscachedir/coss")) {
+			log_error("Creating Squid cache coss dir $cosscachedir");
+			make_dirs($cosscachedir);
+			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
+		}
 	}
 
 	if ($hddsystem == "aufs" || $hddsystem == "coss+aufs") {
 	$aufs = "on";
-	if (!is_dir($cachedir.'/')) {
-		log_error("Creating Squid cache dir $cachedir");
-		make_dirs($cachedir);
-		squid_chown_recursive($cachedir, 'proxy', 'proxy');
+		if (!is_dir($cachedir.'/')) {
+			log_error("Creating Squid cache dir $cachedir");
+			make_dirs($cachedir);
+			squid_chown_recursive($cachedir, 'proxy', 'proxy');
+		}
 	}
-	}
-
- 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
-		log_error("Creating squid cache dir and files");
-		mwexec("/usr/local/sbin/squid -k shutdown");
-		while (is_service_running('squid')) {
-		log_error("Waiting squid to shutdown");
-		sleep(2);
-	}
-/* 		mwexec("/usr/local/sbin/squid -k kill"); */
-		mwexec("/usr/local/sbin/squid -z");
-	}
-
+	
 	if (file_exists("$cachedir/swap.state"))
 		exec("chmod a+rw $cachedir/swap.state");
-	log_error("squid_dash_z done");
+	if (file_exists("$cosscachedir/swap.state"))
+		exec("chmod a+rw $cosscachedir/swap.state");
+
+ 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
+		mwexec("ps awux | grep \"proxy_monitor.sh\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+		mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
+
+		while (is_process_running("squid -D")) {
+		log_error("Waiting squid to shutdown before creating squid cache dir");
+		sleep(1);
+		}
+		log_error("Creating squid cache dir and files");
+		mwexec("/usr/local/sbin/squid -z");
+		mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
+	}
+	
+	/* for custom cache system. should be here soon */
+
 }
 
 function squid_is_valid_acl($acl) {
@@ -208,36 +214,40 @@ function squid_install_command() {
 	$rc['file'] = 'squid.sh';
 	$rc['start'] = <<<EOD
 
-if [ -z "`ps auxw | grep "[s]quid -D" | grep -v grep | awk '{print $2}'`" ];then
-	/usr/local/sbin/squid -D
+i=0
+#dont run if squid still running for 15 sec
+while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
+sleep 1
+i=$((\$i+1))
+if [ \$i -gt 15 ]; then
+exit 1
+break
 fi
-if [ -z "`ps -auxw | grep proxy_monitor.sh | grep -v grep |awk '{print $2}'`" ];then
-	/usr/local/etc/rc.d/proxy_monitor.sh start &
+done
+/usr/local/sbin/squid -D
+if [ -z "`ps auxw | grep "proxy_monitor" | grep -v "grep" | awk '{print $2}'`" ];then
+/usr/local/etc/rc.d/proxy_monitor.sh &
 fi
 /etc/rc.filter_configure_sync
-echo "Reconfiguring filter...done" | logger -p daemon.info -i -t squid.sh
 
 EOD;
 	$rc['stop'] = <<<EOD
 
-kill `ps -auxw | grep proxy_monitor.sh | grep -v grep | awk '{print $2}'`
+#double squid -k shutdown causes squid to improper shutdown
+if [ -f /var/run/squid_shutdown ]; then
+exit 1
+fi
+touch /var/run/squid_shutdown
 /usr/local/sbin/squid -k shutdown
-/etc/rc.filter_configure_sync
-while [ `ps auxw | grep "proxy.*squid" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
-        echo 'please wait...squid still shutting down'
-        sleep 5
+ps awux | grep "proxy_monitor" | grep -v "grep" | awk '{ print $2 }' | xargs kill
+while [ `ps auxw | grep "squid -D" | grep -v "grep" |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
+sleep 1
 done
+rm /var/run/squid_shutdown
 /etc/rc.filter_configure_sync
 
 EOD;
-	$rc['restart'] = <<<EOD
-if [ -z "`ps auxw | grep "[s]quid -D"|awk '{print $2}'`" ];then
-		/usr/local/sbin/squid -D
-	else
-		/usr/local/sbin/squid -k reconfigure
-	fi
 
-EOD;
 	update_status("Writing rc.d files... One moment please...");
 	write_rcfile($rc);
 
@@ -250,6 +260,9 @@ EOD;
 			squid_chown_recursive($dir, 'proxy', 'proxy');
 	}
 
+	$confmgr = $config['system']['hostname'] . "\n";
+	file_put_contents(SQUID_CONFBASE . '/cachemgr.conf', $confmgr);
+
 	/* kill any running proxy alarm scripts */
 	update_status("Checking for running processes... One moment please...");
 	log_error("Stopping any running proxy monitors");
@@ -259,20 +272,21 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	/* restart proxy alarm scripts */
-  	log_error("Starting a proxy monitor script");
-	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh");
+ 	/* restart proxy alarm scripts */
+/*   	log_error("Starting a proxy monitor script");
+	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
 
- 	update_status("sync config... One moment please...");
-	log_error("squid_resync");
 	squid_resync();
+	update_status("Synchronizing configurations... done.");
 
-/* 	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/\#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
-	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf"); */
-  	update_status("Reconfiguring filter... One moment please...");
+	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
+	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
+	/* on install filter_configure being done by squid.sh start */
+/*   	update_status("Reconfiguring filter... One moment please...");
  	filter_configure();
-	update_status("Reconfiguring filter... completed!");
-
+	update_status("Reconfiguring filter... done!");
+	log_error("Reconfiguring filter... done!");
+ */
 }
 
 function squid_deinstall_command() {
@@ -284,24 +298,35 @@ function squid_deinstall_command() {
 	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid'); */
 	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
 	update_output_window("$plswait_txt");
+	$i = 0;
+		while (is_process_running("squid")) {
+		log_error("squid_deinstall_command: Waiting squid to shutdown");
+		update_status("Waiting squid to shutdown");
+		sleep(1);
+		$i++;
+			if ($i > 5){ /* 5 > shutdown_lifetime 3 secs */
+			update_status("squid shutdown taking to long forcing to close all squid related applications");
+			log_error("squid shutdown taking to long forcing to close all squid related applications");
+			mwexec("/usr/bin/killall squid");
+			$num_fields = array( 'proxy_monitor.sh','squid.sh','dnsserver','unlinkd','storeurl.pl'
+			);
+			foreach ($num_fields as $field) {
+				$value = trim($post[$field]);
+				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+			}
+			}
+		}
 	update_status("Finishing package cleanup.");
-	mwexec("rm -rf $logdir");
-
-	$num_fields = array( 'proxy_monitor','squid','dnsserver','unlinkd','storeurl.pl'
-	);
-	foreach ($num_fields as $field) {
-		$value = trim($post[$field]);
-		mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
-	}
+	// mwexec("rm -rf $logdir");
 	// this part needs confirmations. this will solve the conflict with other versions
-/* 	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
+/*  	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
 	);
 	foreach ($num_fields2 as $field2) {
 		$value = trim($post[$field]);
 		unset($config['installedpackages']["$field2"]);
-	}
+	} */
 	mwexec("rm -rf $cachedir");
-	mwexec("rm -rf $cachedir2"); */
+	mwexec("rm -rf $cachedir2");
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
@@ -671,9 +696,9 @@ EOD;
   else {
     squid_install_cron(false);
     }
-
+/* shutdown_lifetime change 3 -> 2 enough to display service stoped*/
 	$conf .= <<<EOD
-shutdown_lifetime 3 seconds
+shutdown_lifetime 2 seconds
 
 EOD;
 
@@ -720,7 +745,7 @@ function squid_resync_cache() {
 	$cachedir = ($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
 	$coss_disk_cache_size = ($settings['coss_harddisk_cache_size'] ? $settings['coss_harddisk_cache_size'] : 50);
 	$disk_cache_size = ($settings['harddisk_cache_size'] ? $settings['harddisk_cache_size'] : 100);
-	$disk_cache_system = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : 'aufs');
+	$disk_cache_system = ($settings['harddisk_cache_system'] ? $settings['harddisk_cache_system'] : 'null');
 	$object_size = (($settings['max_min_size'] ? $settings['max_min_size'] : 4) * 1024);
 	$level1 = ($settings['level1_subdirs'] ? $settings['level1_subdirs'] : 16);
 	$memory_cache_size = ($settings['memory_cache_size'] ? $settings['memory_cache_size'] : 8);
@@ -1224,21 +1249,18 @@ function squid_resync() {
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
-
+	
 /* 	squid_dash_z(); */
 
-	/* if proxy_monitor.sh is not running then this is an .xml startup which is trying to sync all .xml */
-	if (is_process_running('proxy_monitor.sh')) {
-	if (is_service_running('squid')) {
-		log_error("squid_resync: Reloading Squid for configuration sync");
-		mwexec("/usr/local/sbin/squid -k reconfigure");
-	} else {
-		log_error("squid_resync(): Starting Squid");
-		mwexec_bg("/usr/local/sbin/squid -D");
-	}
+	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
+	/* let the squid.sh starts the squid */
+  	if (is_process_running("proxy_monitor.sh")) {
+		if (is_process_running("squid -D")) {
+			mwexec("/usr/local/sbin/squid -k reconfigure");
+			filter_configure();
+		}
 	}
 
-	filter_configure();
 	conf_mount_ro();
 }
 
@@ -1369,8 +1391,7 @@ function squid_generate_rules($type) {
 	global $config;
 
 	$squid_conf = $config['installedpackages']['squid']['config'][0];
-	if (!is_service_running('squid')) {
-		log_error("lusca-cache is installed but not started.  Not installing redirect rules.");
+	if (!shell_exec("ps axwu | grep '(squid) -D' | grep -v 'grep'") != '') { /* is_service_running is not that reliable */
 		return;
 	}
 
@@ -1391,7 +1412,6 @@ function squid_generate_rules($type) {
 		$PPPOE_ALIAS = "\$PPPoE";
 	else
 		$PPPOE_ALIAS = "\$pppoe";
-
 	switch($type) {
 		case 'nat':
 			$rules .= "\n# Setup Squid proxy redirect\n";
@@ -1416,6 +1436,7 @@ function squid_generate_rules($type) {
 			}
 			foreach ($ifaces as $iface) {
 				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
+				log_error("lusca-cache $type rules installed in $iface Interface.");
 			}
 			/* Handle PPPOE case */
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {

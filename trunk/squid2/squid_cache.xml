@@ -159,7 +159,7 @@
 			<fieldname>mem_object_size</fieldname>
 			<description>Objects larger than the size specified (in kilobytes) will not be saved on memory cache. The default value is 4.</description>
 			<type>input</type>
-			<required />
+			<required/>
 			<default_value>4</default_value>
 		</field>
 		<field>
@@ -167,7 +167,7 @@
 			<fieldname>maximum_object_size</fieldname>
 			<description>Objects larger than the size specified (in megabytes) will not be saved on disk cache. If you wish to increase speed more than you want to save bandwidth, this should be set to a low value.</description>
 			<type>input</type>
-
+			<required/>
 			<default_value>32</default_value>
 		</field>
 		<field>
@@ -260,9 +260,10 @@
 		squid_resync();
 		if($needs_dash_z){
 		log_error("squid_cache needs squid -z");
+			mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
 			squid_dash_z();
+			mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
 			}
-		log_error("squid_cache.xml resynced");	
 	</custom_php_resync_config_command>
 	<custom_php_before_form_command>
 		cache_system_changed_javascript();

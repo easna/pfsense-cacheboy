@@ -128,7 +128,6 @@
 		squid_validate_upstream($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		squid_resync();
-		log_error("squid_upstream.xml resynced");	
+		squid_resync();	
 	</custom_php_resync_config_command>
 </packagegui>
