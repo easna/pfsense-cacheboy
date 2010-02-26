@@ -299,16 +299,13 @@ function squid_deinstall_command() {
 	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
 	update_output_window("$plswait_txt");
 	$i = 0;
-		while (is_process_running("squid")) {
-		log_error("squid_deinstall_command: Waiting squid to shutdown");
+		while (is_process_running("squid -D")) {
 		update_status("Waiting squid to shutdown");
 		sleep(1);
 		$i++;
 			if ($i > 5){ /* 5 > shutdown_lifetime 3 secs */
 			update_status("squid shutdown taking to long forcing to close all squid related applications");
-			log_error("squid shutdown taking to long forcing to close all squid related applications");
-			mwexec("/usr/bin/killall squid");
-			$num_fields = array( 'proxy_monitor.sh','squid.sh','dnsserver','unlinkd','storeurl.pl'
+			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd','storeurl.pl'
 			);
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
