@@ -168,6 +168,11 @@
 	    <chmod>0755</chmod>
 		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/filter.diff</item>
 	</additional_files_needed>
+	<additional_files_needed>
+	    <prefix>/etc/inc/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/pkg_utils.diff</item>
+	</additional_files_needed>
 	<fields>
 		<field>
 			<fielddescr>Proxy interface</fielddescr>
@@ -194,13 +199,13 @@
 			<required/>
 		</field>
 		<field>
-			<fielddescr>Bypass proxy for Private Address Space (RFC 1918) destination</fielddescr>
+			<fielddescr>Bypass transparent proxy for Private Address Space (RFC 1918) destination</fielddescr>
 			<fieldname>private_subnet_proxy_off</fieldname>
 			<description>Do not forward traffic to Private Address Space (RFC 1918) &lt;b&gt;destination&lt;/b&gt; through the proxy server but directly through the firewall.</description>
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Bypass proxy for these source IPs</fielddescr>
+			<fielddescr>Bypass transparent proxy for these source IPs</fielddescr>
 			<fieldname>defined_ip_proxy_off</fieldname>
 			<description>Do not forward traffic from these &lt;b&gt;source&lt;/b&gt; IPs through the proxy server but directly through the firewall. Separate by semi-colons (;).</description>
 			<type>input</type>
@@ -328,7 +333,7 @@
 			<description>If set, suppress Squid version string info in HTTP headers and HTML error pages.</description>
 			<type>checkbox</type>
 		</field>
-    <field>
+		<field>
 			<fielddescr>Custom Options</fielddescr>
 			<fieldname>custom_options</fieldname>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the configuration. They need to be squid.conf native options, otherwise squid will NOT work.</description>
@@ -345,9 +350,9 @@
 		update_status("Checking Squid cache... One moment please...");
 		update_output_window("This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.");
  		exec("/bin/cat /etc/inc/filter.diff | /usr/bin/patch -p0 --forward");
-		exec("/bin/rm -f /etc/inc/filter.inc.*");
+		exec("/bin/cat /etc/inc/pkg_utils.inc.diff | /usr/bin/patch -p0 --forward");
+		exec("/bin/rm -f /etc/inc/*.rej /etc/inc/*.orig");
 		squid_install_command();
-		exec("/bin/rm -f /usr/local/etc/rc.d/squid");
 		exec("/bin/ln -s /usr/local/libexec/squid/cachemgr.cgi /usr/local/www/");
 	</custom_php_install_command>
 	<custom_php_deinstall_command>
@@ -373,11 +378,5 @@
 		squid_resync();
 		log_error("squid.xml resynced");
 	</custom_php_resync_config_command>
-	<start_command>
-		log_error("squid.xml start_command");
-	</start_command>
-	<process_kill_command>
-		log_error("squid.xml process_kill_command");
-	</process_kill_command>
   	<filter_rules_needed>squid_generate_rules</filter_rules_needed>
 </packagegui>

@@ -85,7 +85,6 @@ function squid_dash_z() {
 	if ($hddsystem == "coss" || $hddsystem == "coss+aufs") {
 	$coss = "on";
 		if (!file_exists("$cosscachedir/coss")) {
-			log_error("Creating Squid cache coss dir $cosscachedir");
 			make_dirs($cosscachedir);
 			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
 		}
@@ -94,12 +93,11 @@ function squid_dash_z() {
 	if ($hddsystem == "aufs" || $hddsystem == "coss+aufs") {
 	$aufs = "on";
 		if (!is_dir($cachedir.'/')) {
-			log_error("Creating Squid cache dir $cachedir");
 			make_dirs($cachedir);
 			squid_chown_recursive($cachedir, 'proxy', 'proxy');
 		}
 	}
-	
+
 	if (file_exists("$cachedir/swap.state"))
 		exec("chmod a+rw $cachedir/swap.state");
 	if (file_exists("$cosscachedir/swap.state"))
@@ -117,7 +115,7 @@ function squid_dash_z() {
 		mwexec("/usr/local/sbin/squid -z");
 		mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
 	}
-	
+
 	/* for custom cache system. should be here soon */
 
 }
@@ -215,11 +213,11 @@ function squid_install_command() {
 	$rc['start'] = <<<EOD
 
 i=0
-#dont run if squid still running for 15 sec
-while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
+# this will wait the squid to shutdown if its being restarted by squid.sh restart
+while [ `ps auxw | grep "squid -D" | grep -v "grep" |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
 sleep 1
 i=$((\$i+1))
-if [ \$i -gt 15 ]; then
+if [ \$i -gt 10 ]; then
 exit 1
 break
 fi
@@ -235,22 +233,25 @@ EOD;
 
 #double squid -k shutdown causes squid to improper shutdown
 if [ -f /var/run/squid_shutdown ]; then
-exit 1
+#10 sec should be enough for stop spam
+sleep 10 && rm -f /var/run/squid_shutdown &
+exit
 fi
-touch /var/run/squid_shutdown
 /usr/local/sbin/squid -k shutdown
-ps awux | grep "proxy_monitor" | grep -v "grep" | awk '{ print $2 }' | xargs kill
+touch /var/run/squid_shutdown
+ps awux | grep "proxy_monitor.sh" | grep -v "grep" | awk '{ print $2 }' | xargs kill
 while [ `ps auxw | grep "squid -D" | grep -v "grep" |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
 sleep 1
 done
-rm /var/run/squid_shutdown
+rm -f /var/run/squid_shutdown
 /etc/rc.filter_configure_sync
 
 EOD;
 
 	update_status("Writing rc.d files... One moment please...");
 	write_rcfile($rc);
-
+	
+	mwexec(`"ps awux | grep proxy_monitor.sh | grep -v grep | awk '{ print $2 }' | xargs kill"`);
 	exec("chmod a+rx /usr/local/libexec/squid/dnsserver");
 
 	foreach (array(	SQUID_CONFBASE,
@@ -263,30 +264,14 @@ EOD;
 	$confmgr = $config['system']['hostname'] . "\n";
 	file_put_contents(SQUID_CONFBASE . '/cachemgr.conf', $confmgr);
 
-	/* kill any running proxy alarm scripts */
-	update_status("Checking for running processes... One moment please...");
-	log_error("Stopping any running proxy monitors");
-	mwexec("ps awux | grep \"proxy_monitor\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
-	sleep(1);
-
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
-
- 	/* restart proxy alarm scripts */
-/*   	log_error("Starting a proxy monitor script");
-	mwexec_bg("/usr/local/etc/rc.d/proxy_monitor.sh"); */
 
 	squid_resync();
 	update_status("Synchronizing configurations... done.");
 
-	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
+ 	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
 	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
-	/* on install filter_configure being done by squid.sh start */
-/*   	update_status("Reconfiguring filter... One moment please...");
- 	filter_configure();
-	update_status("Reconfiguring filter... done!");
-	log_error("Reconfiguring filter... done!");
- */
 }
 
 function squid_deinstall_command() {
@@ -303,7 +288,7 @@ function squid_deinstall_command() {
 		update_status("Waiting squid to shutdown");
 		sleep(1);
 		$i++;
-			if ($i > 5){ /* 5 > shutdown_lifetime 3 secs */
+			if ($i > 35){
 			update_status("squid shutdown taking to long forcing to close all squid related applications");
 			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd','storeurl.pl'
 			);
@@ -387,9 +372,9 @@ function squid_validate_general($post, $input_errors) {
 		$input_errors[] = "You can not bypass traffic to private subnets  without using the transparent proxy.";
 	}
 
-	if (($post['transparent_proxy'] != 'on') && !empty($post['defined_ip_proxy_off'])) {
+/* 	if (($post['transparent_proxy'] != 'on') && !empty($post['defined_ip_proxy_off'])) {
 		$input_errors[] = "You can not bypass traffic from specific IPs without using the transparent proxy.";
-	}
+	} */
 
 	foreach (array('defined_ip_proxy_off') as $hosts) {
 		foreach (explode(";", $post[$hosts]) as $host) {
@@ -693,9 +678,9 @@ EOD;
   else {
     squid_install_cron(false);
     }
-/* shutdown_lifetime change 3 -> 2 enough to display service stoped*/
+
 	$conf .= <<<EOD
-shutdown_lifetime 2 seconds
+shutdown_lifetime 0 seconds
 
 EOD;
 
@@ -1246,7 +1231,7 @@ function squid_resync() {
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
-	
+
 /* 	squid_dash_z(); */
 
 	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
@@ -1257,7 +1242,6 @@ function squid_resync() {
 			filter_configure();
 		}
 	}
-
 	conf_mount_ro();
 }
 
