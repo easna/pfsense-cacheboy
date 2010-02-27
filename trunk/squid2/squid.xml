@@ -350,7 +350,7 @@
 		update_status("Checking Squid cache... One moment please...");
 		update_output_window("This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.");
  		exec("/bin/cat /etc/inc/filter.diff | /usr/bin/patch -p0 --forward");
-		exec("/bin/cat /etc/inc/pkg_utils.inc.diff | /usr/bin/patch -p0 --forward");
+		exec("/bin/cat /etc/inc/pkg_utils.diff | /usr/bin/patch -p0 --forward");
 		exec("/bin/rm -f /etc/inc/*.rej /etc/inc/*.orig");
 		squid_install_command();
 		exec("/bin/ln -s /usr/local/libexec/squid/cachemgr.cgi /usr/local/www/");
