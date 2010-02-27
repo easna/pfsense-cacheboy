@@ -257,13 +257,7 @@
 		cache_system_changed_javascript();
 	</custom_php_after_form_command>
 	<custom_php_resync_config_command>
-		squid_resync();
-		if($needs_dash_z){
-		log_error("squid_cache needs squid -z");
-			mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
-			squid_dash_z();
-			mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
-			}
+		squid_resync($needs_dash_z);
 	</custom_php_resync_config_command>
 	<custom_php_before_form_command>
 		cache_system_changed_javascript();

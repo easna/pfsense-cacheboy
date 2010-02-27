@@ -103,8 +103,7 @@ function squid_dash_z() {
 	if (file_exists("$cosscachedir/swap.state"))
 		exec("chmod a+rw $cosscachedir/swap.state");
 
- 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
-		mwexec("ps awux | grep \"proxy_monitor.sh\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+ 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on") || $hddsystem == "custom") {
 		mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
 
 		while (is_process_running("squid -D")) {
@@ -114,6 +113,10 @@ function squid_dash_z() {
 		log_error("Creating squid cache dir and files");
 		mwexec("/usr/local/sbin/squid -z");
 		mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
+	} else if ($hddsystem == "null")
+	{
+		log_error("null cache dir");
+		mwexec_bg("/usr/local/etc/rc.d/squid.sh restart");
 	}
 
 	/* for custom cache system. should be here soon */
@@ -212,16 +215,6 @@ function squid_install_command() {
 	$rc['file'] = 'squid.sh';
 	$rc['start'] = <<<EOD
 
-i=0
-# this will wait the squid to shutdown if its being restarted by squid.sh restart
-while [ `ps auxw | grep "squid -D" | grep -v "grep" |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
-sleep 1
-i=$((\$i+1))
-if [ \$i -gt 10 ]; then
-exit 1
-break
-fi
-done
 /usr/local/sbin/squid -D
 if [ -z "`ps auxw | grep "proxy_monitor" | grep -v "grep" | awk '{print $2}'`" ];then
 /usr/local/etc/rc.d/proxy_monitor.sh &
@@ -231,18 +224,13 @@ fi
 EOD;
 	$rc['stop'] = <<<EOD
 
-#double squid -k shutdown causes squid to improper shutdown
 if [ -f /var/run/squid_shutdown ]; then
-#10 sec should be enough for stop spam
-sleep 10 && rm -f /var/run/squid_shutdown &
 exit
 fi
-/usr/local/sbin/squid -k shutdown
 touch /var/run/squid_shutdown
-ps awux | grep "proxy_monitor.sh" | grep -v "grep" | awk '{ print $2 }' | xargs kill
-while [ `ps auxw | grep "squid -D" | grep -v "grep" |awk '{print $2}'| wc -l | awk '{ print $1 }'` -gt 0 ] ; do
-sleep 1
-done
+/usr/local/sbin/squid -k shutdown
+ps awux | grep proxy_monitor | grep -v grep | awk '{print $2}' | xargs kill
+sleep 3
 rm -f /var/run/squid_shutdown
 /etc/rc.filter_configure_sync
 
@@ -267,7 +255,7 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	squid_resync();
+	squid_resync(false);
 	update_status("Synchronizing configurations... done.");
 
  	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
@@ -288,7 +276,7 @@ function squid_deinstall_command() {
 		update_status("Waiting squid to shutdown");
 		sleep(1);
 		$i++;
-			if ($i > 35){
+			if ($i > 15){
 			update_status("squid shutdown taking to long forcing to close all squid related applications");
 			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd','storeurl.pl'
 			);
@@ -368,9 +356,9 @@ function squid_validate_general($post, $input_errors) {
 		$input_errors[] = "You can not run squid on the same port as the webgui";
 	}
 
-	if (($post['transparent_proxy'] != 'on') && ($post['private_subnet_proxy_off'] == 'on')) {
+/* 	if (($post['transparent_proxy'] != 'on') && ($post['private_subnet_proxy_off'] == 'on')) {
 		$input_errors[] = "You can not bypass traffic to private subnets  without using the transparent proxy.";
-	}
+	} */
 
 /* 	if (($post['transparent_proxy'] != 'on') && !empty($post['defined_ip_proxy_off'])) {
 		$input_errors[] = "You can not bypass traffic from specific IPs without using the transparent proxy.";
@@ -1199,9 +1187,11 @@ function squid_resync_users() {
 	chmod(SQUID_PASSWD, 0600);
 }
 
-function squid_resync() {
+function squid_resync($dashz) {
 	global $config;
 	conf_mount_rw();
+	if (empty($dashz))
+	$dashz = false;
 	$conf = squid_resync_general() . "\n";
 	$conf .= squid_resync_cache() . "\n";
 	$conf .= squid_resync_redirector() . "\n";
@@ -1231,18 +1221,29 @@ function squid_resync() {
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
-
-/* 	squid_dash_z(); */
+	
+	conf_mount_ro();
 
 	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
 	/* let the squid.sh starts the squid */
-  	if (is_process_running("proxy_monitor.sh")) {
-		if (is_process_running("squid -D")) {
-			mwexec("/usr/local/sbin/squid -k reconfigure");
-			filter_configure();
-		}
+	switch($dashz) {
+		case true:
+				mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
+				squid_dash_z();
+				log_error("case dashz");
+				mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
+		break;
+		case false:
+				if (is_process_running("proxy_monitor.sh")) {
+					if (is_process_running("squid -D")) {
+						mwexec("/usr/local/sbin/squid -k reconfigure");
+						filter_configure();
+						log_error("case reconfigure");
+					}
+				}
+		break;
 	}
-	conf_mount_ro();
+
 }
 
 function squid_print_javascript_auth() {
