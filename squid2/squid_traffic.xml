@@ -180,6 +180,6 @@
 		squid_validate_traffic($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		squid_resync( );
+		squid_resync(dashzoff);
 	</custom_php_resync_config_command>
 </packagegui>

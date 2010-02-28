@@ -211,7 +211,7 @@
 		squid_print_javascript_auth2();
 	</custom_php_after_form_command>
 	<custom_php_resync_config_command>
-		squid_resync( );
+		squid_resync(dashzoff);
 	</custom_php_resync_config_command>
 	<custom_php_before_form_command>
 		squid_print_javascript_auth2();
