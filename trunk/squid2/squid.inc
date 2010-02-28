@@ -104,20 +104,17 @@ function squid_dash_z() {
 		exec("chmod a+rw $cosscachedir/swap.state");
 
  	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on") || $hddsystem == "custom") {
-		mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
-
 		while (is_process_running("squid -D")) {
 		log_error("Waiting squid to shutdown before creating squid cache dir");
 		sleep(1);
 		}
 		log_error("Creating squid cache dir and files");
 		mwexec("/usr/local/sbin/squid -z");
-		mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
-	} else if ($hddsystem == "null")
+	} /* else if ($hddsystem == "null")
 	{
 		log_error("null cache dir");
-		mwexec_bg("/usr/local/etc/rc.d/squid.sh restart");
-	}
+		mwexec("/usr/local/sbin/squid -k shutdown");
+	} */
 
 	/* for custom cache system. should be here soon */
 
@@ -215,30 +212,42 @@ function squid_install_command() {
 	$rc['file'] = 'squid.sh';
 	$rc['start'] = <<<EOD
 
-/usr/local/sbin/squid -D
-if [ -z "`ps auxw | grep "proxy_monitor" | grep -v "grep" | awk '{print $2}'`" ];then
-/usr/local/etc/rc.d/proxy_monitor.sh &
+while [ `pgrep -f "squid -D"` ]; do
+	sleep 1
+	i=$((\$i+1))
+	if [ \$i -gt 15 ]; then
+		exit
+	fi
+done
+if [ ! `/bin/pgrep -f "squid -D"` ]; then
+	/usr/local/sbin/squid -D
 fi
 /etc/rc.filter_configure_sync
+if [ ! `/bin/pgrep -f "proxy_monitor"` ]; then
+	/usr/local/etc/rc.d/proxy_monitor.sh &
+fi
 
 EOD;
 	$rc['stop'] = <<<EOD
 
-if [ -f /var/run/squid_shutdown ]; then
-exit
+if [ `/bin/pgrep -f "squid -D"` ]; then
+	/bin/pkill -f proxy_monitor.sh
+	/usr/local/sbin/squid -k shutdown
 fi
-touch /var/run/squid_shutdown
-/usr/local/sbin/squid -k shutdown
-ps awux | grep proxy_monitor | grep -v grep | awk '{print $2}' | xargs kill
-sleep 3
-rm -f /var/run/squid_shutdown
+while [ `pgrep -f "squid -D"` ]; do
+	sleep 1
+	i=$((\$i+1))
+	if [ \$i -gt 5 ]; then
+		exit
+	fi
+done
 /etc/rc.filter_configure_sync
 
 EOD;
 
 	update_status("Writing rc.d files... One moment please...");
 	write_rcfile($rc);
-	
+
 	mwexec(`"ps awux | grep proxy_monitor.sh | grep -v grep | awk '{ print $2 }' | xargs kill"`);
 	exec("chmod a+rx /usr/local/libexec/squid/dnsserver");
 
@@ -255,7 +264,8 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	squid_resync(false);
+	squid_resync(dashzoff);
+	squid_dash_z();
 	update_status("Synchronizing configurations... done.");
 
  	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
@@ -1190,8 +1200,6 @@ function squid_resync_users() {
 function squid_resync($dashz) {
 	global $config;
 	conf_mount_rw();
-	if (empty($dashz))
-	$dashz = false;
 	$conf = squid_resync_general() . "\n";
 	$conf .= squid_resync_cache() . "\n";
 	$conf .= squid_resync_redirector() . "\n";
@@ -1221,25 +1229,26 @@ function squid_resync($dashz) {
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
 	}
-	
+
 	conf_mount_ro();
 
 	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
 	/* let the squid.sh starts the squid */
 	switch($dashz) {
-		case true:
+		case dashzon:
 				mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
 				squid_dash_z();
-				log_error("case dashz");
+				log_error("case dashzon");
 				mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
 		break;
-		case false:
+		case dashzoff:
 				if (is_process_running("proxy_monitor.sh")) {
 					if (is_process_running("squid -D")) {
 						mwexec("/usr/local/sbin/squid -k reconfigure");
 						filter_configure();
 						log_error("case reconfigure");
 					}
+				log_error("no proxy_monitor");
 				}
 		break;
 	}

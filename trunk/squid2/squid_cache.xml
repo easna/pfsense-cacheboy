@@ -246,7 +246,7 @@
 	<custom_php_command_before_form>
 		if($_POST['harddisk_cache_system']) {
 		if($_POST['harddisk_cache_system'] != $config['installedpackages']['squidcache']['config'][0]['harddisk_cache_system']) {
-			$needs_dash_z = true;
+			$needs_dash_z = dashzon;
 		}
 		}
 	</custom_php_command_before_form>
