@@ -139,6 +139,6 @@
 		squid_validate_nac($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		squid_resync(dashzoff);	
+		squid_resync();	
 	</custom_php_resync_config_command>
 </packagegui>

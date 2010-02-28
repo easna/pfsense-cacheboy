@@ -110,11 +110,7 @@ function squid_dash_z() {
 		}
 		log_error("Creating squid cache dir and files");
 		mwexec("/usr/local/sbin/squid -z");
-	} /* else if ($hddsystem == "null")
-	{
-		log_error("null cache dir");
-		mwexec("/usr/local/sbin/squid -k shutdown");
-	} */
+	}
 
 	/* for custom cache system. should be here soon */
 
@@ -264,7 +260,7 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	squid_resync(dashzoff);
+	squid_resync();
 	squid_dash_z();
 	update_status("Synchronizing configurations... done.");
 
@@ -1197,7 +1193,7 @@ function squid_resync_users() {
 	chmod(SQUID_PASSWD, 0600);
 }
 
-function squid_resync($dashz) {
+function squid_resync() {
 	global $config;
 	conf_mount_rw();
 	$conf = squid_resync_general() . "\n";
@@ -1234,23 +1230,13 @@ function squid_resync($dashz) {
 
 	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
 	/* let the squid.sh starts the squid */
-	switch($dashz) {
-		case dashzon:
-				mwexec_bg("/usr/local/etc/rc.d/squid.sh stop");
-				squid_dash_z();
-				log_error("case dashzon");
-				mwexec_bg("/usr/local/etc/rc.d/squid.sh start");
-		break;
-		case dashzoff:
-				if (is_process_running("proxy_monitor.sh")) {
-					if (is_process_running("squid -D")) {
-						mwexec("/usr/local/sbin/squid -k reconfigure");
-						filter_configure();
-						log_error("case reconfigure");
-					}
-				log_error("no proxy_monitor");
-				}
-		break;
+	if (is_process_running("proxy_monitor.sh")) {
+		if (is_process_running("squid -D")) {
+			mwexec("/usr/local/sbin/squid -k reconfigure");
+			filter_configure();
+			log_error("squid reconfigured");
+		}
+	log_error("no proxy_monitor");
 	}
 
 }
