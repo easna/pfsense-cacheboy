@@ -1,4 +1,5 @@
 #!/usr/local/bin/perl
+# $Rev$
 # by chudy_fernandez@yahoo.com
 # Updates at http://wiki.squid-cache.org/ConfigExamples/DynamicContent/YouTube/Discussion
 $|=1;

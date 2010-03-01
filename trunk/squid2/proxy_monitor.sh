@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: proxy_monitor.sh,v 1.5 2007/01/17 14:55:28 smos Exp $ */
+# $Rev$ */
 #
 #	proxy_monitor.sh
 #	Copyright (C) 2006 Scott Ullrich
