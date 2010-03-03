@@ -19,7 +19,7 @@ extract_config () {
 complete () {
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
 	/usr/local/etc/rc.d/samba.sh start
-	rehash
+	hash -r
 	echo "Installation Complete!"
 	echo "Type password for root"
 	smbpasswd -a root
