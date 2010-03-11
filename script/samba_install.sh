@@ -8,10 +8,9 @@ dl_missing () {
 	rm sambalibdep.tar.gz
 	}
 extract_config () {
-	echo "Download and ExtracTing config"
-	fetch http://pfsense-cacheboy.googlecode.com/files/smbconf.tar.gz
-	tar -C / -xvf smbconf.tar.gz
-	rm smbconf.tar.gz
+	echo "Downloading config"
+	fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/conf/smb.conf
+	mv smb.conf /usr/local/etc/smb.conf
 	hostname=`hostname | sed 's/\...*//'`
 	cat /usr/local/etc/smb.conf | sed s/hostname_only/$hostname/ > /usr/local/etc/smb.conf.tmp
 	mv /usr/local/etc/smb.conf.tmp /usr/local/etc/smb.conf
