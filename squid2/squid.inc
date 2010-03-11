@@ -1040,7 +1040,7 @@ EOD;
 	}
 	else
 		$conf .= "delay_access 1 allow all\n";
-		if ( $perbody != 0 )
+		if ($perbody != 0)
 		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
 
 	return $conf;

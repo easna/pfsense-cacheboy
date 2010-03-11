@@ -28,7 +28,7 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	print $x . "http://www.google-analytics.com/__utm.gif\n";
 	
 			#Cache High Latency Ads 
-} elsif (m/^http:\/\/([a-z0-9.]*)(\.doubleclick\.net|\.quantserve\.com|\.googlesyndication\.com)(.*)/) {
+} elsif (m/^http:\/\/([a-z0-9.]*)(\.doubleclick\.net|\.quantserve\.com|\.googlesyndication\.com|yieldmanager|cpxinteractive)(.*)/) {
 	$y = $3;$z = $2;
 	for ($y) {
 	s/pixel;.*/pixel/;
@@ -39,8 +39,12 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	s/[&?]correlator=[0-9]*//;
 	s/&cookie=[^&]*//;
 	s/&ga_hid=[^&]*//;
-	s/&u_his=[^&]*//;
+	s/&ga_vid=[^&]*//;
+	s/&ga_sid=[^&]*//;
+	# s/&prev_slotnames=[^&]*//;
+	# s/&u_his=[^&]*//;
 	s/&dt=[^&]*//;
+	s/&dtd=[^&]*//;
 	s/&lmt=[^&]*//;
 	s/(&alternate_ad_url=http%3A%2F%2F[^(%2F)]*)[^&]*/\1/;
 	s/(&url=http%3A%2F%2F[^(%2F)]*)[^&]*/\1/;
@@ -48,6 +52,10 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	s/(&cookie=http%3A%2F%2F[^(%2F)]*)[^&]*/\1/;
 	s/[;&?]ord=[?0-9]*//;
 	s/[;&]mpvid=[^&;]*//;
+	s/&xpc=[^&]*//;
+	# yieldmanager
+	s/\?clickTag=[^&]*//;
+	s/&u=[^&]*//;
 	}
 	print $x . "http://" . $1 . $2 . $y . "\n";
 	
@@ -72,7 +80,7 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 } elsif (($u =~ /maxporn/) && (m/^http:\/\/([^\/]*?)\/(.*?)\/([^\/]*?)(\?.*)?$/)) {
 	print $x . "http://" . $1 . "/SQUIDINTERNAL/" . $3 . "\n";	
 	
-			#like porn hub variables url and center part of the path, filename etention 3 or 4 with or withour ? at the end
+			#like porn hub variables url and center part of the path, filename etention 3 or 4 with or without ? at the end
 } elsif (($u =~ /tube8|pornhub|xvideos/) && (m/^http:\/\/(([A-Za-z]+[0-9-.]+)*?)\.([a-z]*[0-9]?\.[^\/]{3}\/[a-z]*)(.*?)((\/[a-z]*)?(\/[^\/]*){4}\.[^\/\?]{3,4})(\?.*)?$/)) {
 	print $x . "http://cdn." . $3 . $5 . "\n";		
 			#...spicific servers end here.
