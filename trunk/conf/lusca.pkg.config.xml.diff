@@ -1,0 +1,66 @@
+diff -u1r orig/pkg_config.7.xml packages/pkg_config.7.xml
+--- orig/pkg_config.7.xml	2010-03-20 18:37:54.000000000 +0800
++++ packages/pkg_config.7.xml	2010-03-20 18:46:28.547522000 +0800
+@@ -4,2 +4,18 @@
+   <packages>
++     <package>
++      <name>lusca-cache</name>
++      <descr>High performance web proxy cache.</descr>
++      <website>http://www.squid-cache.org/</website>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <category>Network</category>
++      <version>r14428</version>
++      <status>Stable</status>
++      <required_version>1.2.3</required_version>
++      <maintainer>chudy_fernandez@yahoo.com</maintainer>
++      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
++      <depends_on_package>lusca-cache-r14428.tbz</depends_on_package>
++      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++      <configurationfile>squid.xml</configurationfile>
++    </package>
+ 	<package>
+diff -u1r orig/pkg_config.xml packages/pkg_config.xml
+--- orig/pkg_config.xml	2010-03-20 18:37:59.000000000 +0800
++++ packages/pkg_config.xml	2010-03-20 18:45:03.766192000 +0800
+@@ -4,2 +4,18 @@
+   <packages>
++     <package>
++      <name>lusca-cache</name>
++      <descr>High performance web proxy cache.</descr>
++      <website>http://www.squid-cache.org/</website>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <category>Network</category>
++      <version>r14428</version>
++      <status>Stable</status>
++      <required_version>1.2.3</required_version>
++      <maintainer>chudy_fernandez@yahoo.com</maintainer>
++      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
++      <depends_on_package>lusca-cache-r14428.tbz</depends_on_package>
++      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++      <configurationfile>squid.xml</configurationfile>
++    </package>
+     <package>
+diff -u1r orig/pkg_config.xml.amd64 packages/pkg_config.xml.amd64
+--- orig/pkg_config.xml.amd64	2010-03-20 18:38:01.000000000 +0800
++++ packages/pkg_config.xml.amd64	2010-03-20 18:46:19.054595000 +0800
+@@ -4,2 +4,18 @@
+   <packages>
++     <package>
++      <name>lusca-cache</name>
++      <descr>High performance web proxy cache.</descr>
++      <website>http://www.squid-cache.org/</website>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <category>Network</category>
++      <version>r14428</version>
++      <status>Stable</status>
++      <required_version>1.2.3</required_version>
++      <maintainer>chudy_fernandez@yahoo.com</maintainer>
++      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
++      <depends_on_package>lusca-cache-r14428.tbz</depends_on_package>
++      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++      <configurationfile>squid.xml</configurationfile>
++    </package>
+   </packages>

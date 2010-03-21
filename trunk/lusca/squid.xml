@@ -4,7 +4,7 @@
 <packagegui>
         <copyright>
         <![CDATA[
-/* $Rev$ */
+/* $Rev: 100 $ */
 /* ========================================================================== */
 /*
     authng.xml
@@ -96,47 +96,47 @@
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid.inc</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.inc</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_nac.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_nac.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_traffic.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_traffic.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_upstream.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_upstream.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_auth.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_auth.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_users.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_users.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/rc.d/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/proxy_monitor.sh</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/proxy_monitor.sh</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/squid_cache.xml</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
@@ -164,14 +164,9 @@
 		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/dir.conf</item>
 	</additional_files_needed>
 	<additional_files_needed>
-	    <prefix>/etc/inc/</prefix>
+	    <prefix>/usr/local/pkg/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/filter.diff</item>
-	</additional_files_needed>
-	<additional_files_needed>
-	    <prefix>/etc/inc/</prefix>
-	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/squid2/pkg_utils.diff</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/patches.diff</item>
 	</additional_files_needed>
 	<fields>
 		<field>
@@ -349,8 +344,7 @@
 		log_error("squid.xml custom_php_install_command");	
 		update_status("Checking Squid cache... One moment please...");
 		update_output_window("This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.");
- 		exec("/bin/cat /etc/inc/filter.diff | /usr/bin/patch -p0 --forward");
-		exec("/bin/cat /etc/inc/pkg_utils.diff | /usr/bin/patch -p0 --forward");
+ 		exec("/bin/cat /usr/local/pkg/patches.diff | /usr/bin/patch -p0 --forward");
 		exec("/bin/rm -f /etc/inc/*.rej /etc/inc/*.orig");
 		squid_install_command();
 		exec("/bin/ln -s /usr/local/libexec/squid/cachemgr.cgi /usr/local/www/");

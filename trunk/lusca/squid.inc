@@ -1,5 +1,5 @@
 <?php
-/* $Rev$ */
+/* $Rev: 104 $ */
 /*
 	squid.inc
 	Copyright (C) 2006-2009 Scott Ullrich
@@ -226,8 +226,8 @@ fi
 EOD;
 	$rc['stop'] = <<<EOD
 
+/bin/pkill -f proxy_monitor.sh
 if [ `/bin/pgrep -f "squid -D"` ]; then
-	/bin/pkill -f proxy_monitor.sh
 	/usr/local/sbin/squid -k shutdown
 fi
 while [ `pgrep -f "squid -D"` ]; do
@@ -237,7 +237,7 @@ while [ `pgrep -f "squid -D"` ]; do
 		exit
 	fi
 done
-/etc/rc.filter_configure_sync
+/etc/rc.filter_configure_sync &
 
 EOD;
 
@@ -270,6 +270,7 @@ EOD;
 
 function squid_deinstall_command() {
 	global $config, $g;
+	mwexec("/usr/local/etc/rc.d/squid.sh stop");
 	$plswait_txt = "This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.";
 	squid_install_cron(false);
  	$settings = &$config['installedpackages']['squid']['config'][0];
