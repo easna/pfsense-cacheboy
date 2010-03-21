@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Rev$ */
+# $Rev: 100 $ */
 #
 #	proxy_monitor.sh
 #	Copyright (C) 2006 Scott Ullrich
