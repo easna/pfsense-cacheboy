@@ -1,5 +1,5 @@
 <?php
-/* $Rev: 104 $ */
+/* $Rev$ */
 /*
 	squid.inc
 	Copyright (C) 2006-2009 Scott Ullrich
