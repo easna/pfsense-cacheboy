@@ -337,11 +337,7 @@
 			<rows>5</rows>
 		</field>
 	</fields>
-	<custom_php_global_functions>
-		log_error("squid.xml custom_php_global_functions");	
-	</custom_php_global_functions>
 	<custom_php_install_command>
-		log_error("squid.xml custom_php_install_command");	
 		update_status("Checking Squid cache... One moment please...");
 		update_output_window("This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.");
  		exec("/bin/cat /usr/local/pkg/patches.diff | /usr/bin/patch -p0 --forward");
@@ -350,27 +346,17 @@
 		exec("/bin/ln -s /usr/local/libexec/squid/cachemgr.cgi /usr/local/www/");
 	</custom_php_install_command>
 	<custom_php_deinstall_command>
-		log_error("squid.xml custom_php_deinstall_command");
 		squid_deinstall_command();
 		exec("/bin/rm -f /usr/local/etc/rc.d/squid*");
 	</custom_php_deinstall_command>
-	<custom_add_php_command>
-		log_error("squid.xml custom_add_php_command");
-	</custom_add_php_command>
-	<custom_add_php_command_late>
-		log_error("squid.xml custom_add_php_command_late");
-	</custom_add_php_command_late>
 	<custom_php_command_before_form>
-		log_error("squid.xml custom_php_command_before_form");
 		squid_before_form_general(&amp;$pkg);
 	</custom_php_command_before_form>
 	<custom_php_validation_command>
-		log_error("squid.xml custom_php_validation_command");
 		squid_validate_general($_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
 		squid_resync();
-		log_error("squid.xml resynced");
 	</custom_php_resync_config_command>
   	<filter_rules_needed>squid_generate_rules</filter_rules_needed>
 </packagegui>

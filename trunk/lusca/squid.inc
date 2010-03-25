@@ -270,7 +270,6 @@ EOD;
 
 function squid_deinstall_command() {
 	global $config, $g;
-	mwexec("/usr/local/etc/rc.d/squid.sh stop");
 	$plswait_txt = "This operation may take quite some time, please be patient.  Do not press stop or attempt to navigate away from this page during this process.";
 	squid_install_cron(false);
  	$settings = &$config['installedpackages']['squid']['config'][0];
@@ -283,9 +282,9 @@ function squid_deinstall_command() {
 		update_status("Waiting squid to shutdown");
 		sleep(1);
 		$i++;
-			if ($i > 15){
+			if ($i > 10){
 			update_status("squid shutdown taking to long forcing to close all squid related applications");
-			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd','storeurl.pl'
+			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd'
 			);
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
@@ -732,6 +731,13 @@ function squid_resync_cache() {
 	$cache_policy = ($settings['cache_replacement_policy'] ? $settings['cache_replacement_policy'] : 'heap LFUDA');
 	$memory_policy = ($settings['memory_replacement_policy'] ? $settings['memory_replacement_policy'] : 'heap GDSF');
 	$offline_mode = ($settings['enable_offline'] == 'on' ? 'on' : 'off');
+	$n = 512;
+	$s = 8192;
+	while ($coss_disk_cache_size >= $s){$n = $n * 2;$s = $s * 2;}
+	if ($n > 8192)
+	$n = 8192;
+	$blocksize = "block-size=$n";
+	
 	if ($disk_cache_system == "null") {
 	$cache_dir = "cache_dir null /tmp";
 	}
@@ -739,14 +745,14 @@ function squid_resync_cache() {
 	$cache_dir = "include /usr/local/etc/squid/dir.conf";
 	}
 	elseif ($disk_cache_system == "coss+aufs") {
-	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size";
+	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size $blocksize";
 	$cache_dir = "cache_dir aufs $cachedir $disk_cache_size $level1 256 min-size=$object_size";
 	}
 	elseif ($disk_cache_system == "aufs") {
 	$cache_dir = "cache_dir aufs $cachedir $disk_cache_size $level1 256";
 	}
 	elseif ($disk_cache_system == "coss") {
-	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size";
+	$cache_coss_dir = "cache_dir coss $cosscachedir/coss $coss_disk_cache_size max-size=$object_size $blocksize";
 	}
 
 	$conf = <<<EOD
