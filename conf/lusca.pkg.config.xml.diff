@@ -7,7 +7,7 @@ diff -u1r orig/pkg_config.7.xml packages/pkg_config.7.xml
 +      <name>lusca-cache</name>
 +      <descr>High performance web proxy cache.</descr>
 +      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
 +      <category>Network</category>
 +      <version>r14428</version>
 +      <status>Stable</status>
@@ -29,7 +29,7 @@ diff -u1r orig/pkg_config.xml packages/pkg_config.xml
 +      <name>lusca-cache</name>
 +      <descr>High performance web proxy cache.</descr>
 +      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
 +      <category>Network</category>
 +      <version>r14428</version>
 +      <status>Stable</status>
@@ -51,7 +51,7 @@ diff -u1r orig/pkg_config.xml.amd64 packages/pkg_config.xml.amd64
 +      <name>lusca-cache</name>
 +      <descr>High performance web proxy cache.</descr>
 +      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/</pkginfolink>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
 +      <category>Network</category>
 +      <version>r14428</version>
 +      <status>Stable</status>
