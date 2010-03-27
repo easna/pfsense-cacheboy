@@ -88,8 +88,8 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 			#...spicific servers end here.
 
 			#photos-X.ak.fbcdn.net where X a-z
-#} elsif (m/^http:\/\/photos-[a-z].ak.fbcdn.net\/(.*)/) {
-#	print $x . "http://photos.ak.fbcdn.net/" . $1  . "\n";
+} elsif (m/^http:\/\/photos-[a-z].ak.fbcdn.net\/(.*)/) {
+	print $x . "http://photos.ak.fbcdn.net/" . $1  . "\n";
 
 			#general purpose for cdn servers. add above your specific servers.
 } elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
