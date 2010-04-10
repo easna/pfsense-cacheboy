@@ -83,8 +83,8 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	print $x . "http://" . $1 . "/SQUIDINTERNAL/" . $3 . "\n";
 
 			#like porn hub variables url and center part of the path, filename etention 3 or 4 with or without ? at the end
-} elsif (($u =~ /tube8|pornhub|xvideos/) && (m/^http:\/\/(([A-Za-z]+[0-9-.]+)*?)\.([a-z]*[0-9]?\.[^\/]{3}\/[a-z]*)(.*?)((\/[a-z]*)?(\/[^\/]*){4}\.[^\/\?]{3,4})(\?.*)?$/)) {
-	print $x . "http://cdn." . $3 . $5 . "\n";
+} elsif (($u =~ /tube8|pornhub|xvideos/) && (m/^http:\/\/(([A-Za-z]+[0-9-.]+)*?(\.[a-z]*)?)\.([a-z]*[0-9]?\.[^\/]{3}\/[a-z]*)(.*?)((\/[a-z]*)?(\/[^\/]*){4}\.[^\/\?]{3,4})(\?.*)?$/)) {
+	print $x . "http://cdn." . $4 . $6 . "\n";
 			#...spicific servers end here.
 
 			#photos-X.ak.fbcdn.net where X a-z
@@ -107,7 +107,7 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	print $x . "http://" . $y[0] . ".yimg.com/"  . $y[1] . "\n";
 
 			#generic http://variable.domain.com/path/filename."ext" or "exte" with or withour "?"
-} elsif (m/^http:\/\/(.*)([^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})(\?.*)?$/) {
+} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})(\?.*)?$/) {
 	@y = ($1,$2,$3,$4);
 	$y[0] =~ s/(([a-zA-A-]+[0-9-]+)|(.*cdn.*)|(.*cache.*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
