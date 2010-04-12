@@ -106,8 +106,8 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	$y[1] =~ s/&sig=.*//;
 	print $x . "http://" . $y[0] . ".yimg.com/"  . $y[1] . "\n";
 
-			#generic http://variable.domain.com/path/filename."ext" or "exte" with or withour "?"
-} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})(\?.*)?$/) {
+			#generic http://variable.domain.com/path/filename."ext" or "exte" with or withour "? or %"
+} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})((\?|\%).*)?$/) {
 	@y = ($1,$2,$3,$4);
 	$y[0] =~ s/(([a-zA-A-]+[0-9-]+)|(.*cdn.*)|(.*cache.*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
@@ -117,7 +117,7 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	print $x . "http://cdn." . $3 . "." . $4 . "/" . $5 .  "\n";
 
 			# spicific extention that ends with ?
-} elsif (m/^http:\/\/(.*?)\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|on2)\?(.*)/) {
+} elsif (m/^http:\/\/(.*?)\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|on2)(.*)/) {
 	print $x . "http://" . $1 . "/" . $2  . "." . $3 . "\n";
 
 			# all that ends with ;
