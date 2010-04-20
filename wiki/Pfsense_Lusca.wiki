@@ -1,14 +1,14 @@
 #summary Install Lusca on pfsense.
 = Introduction =
 Compiled with:<br>
-'--enable-removal-policies=heap' - _we don't need lru_<br>
+'--enable-removal-policies=lru heap' <br>
 '--enable-storeio=aufs,coss,null' - _null if you don't want to use your hard drive_<br>
 '--enable-delay-pools' <br>
 '--enable-arp-acl' - _mac address acl_ <br>
 '--enable-pf-transparent' <br>
 '--enable-snmp' - _for MRTG_<br>
 
-Lusca-cache patched r10. Patches applied:
+Lusca-cache patched r11. Patches applied:
   # ignore-must-revalidate
   # vary aware using storeurl
   # save vary object/index other than COSS (vary index will be lost on rebuild if in coss)
