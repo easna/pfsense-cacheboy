@@ -280,8 +280,8 @@ function squid_deinstall_command() {
 	squid_install_cron(false);
  	$settings = &$config['installedpackages']['squid']['config'][0];
 /* 	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
-	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid'); */
-	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
+	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
+	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log'); */
 	update_output_window("$plswait_txt");
 	$i = 0;
 		while (is_process_running("squid -D")) {
