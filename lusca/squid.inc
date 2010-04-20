@@ -218,9 +218,14 @@ function squid_install_command() {
 # /etc/fstab configured not to check cache_dir drives
 
 #if [ ! -d "/cache1/00" ] && [ ! `/bin/pgrep -f fsck` ]; then
-#fsck -y /cache0 && rm -r lost+found
-#fsck -y /cache1 && rm -r lost+found
+#fsck -y /cache0
+#fsck -y /cache1
+#while [ `/bin/pgrep -f fsck` ]; do
+#sleep 1
+#done
 #mount -a
+#rm -r /cache0/lost+found &
+#rm -r /cache1/lost+found &
 #fi
 
 while [ `pgrep -f "squid -D"` ]; do
