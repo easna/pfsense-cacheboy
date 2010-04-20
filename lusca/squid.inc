@@ -88,12 +88,18 @@ function squid_dash_z() {
 			make_dirs($cosscachedir);
 			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
 		}
+		else {
+			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
+		}
 	}
 
 	if ($hddsystem == "aufs" || $hddsystem == "coss+aufs") {
 	$aufs = "on";
 		if (!is_dir($cachedir.'/')) {
 			make_dirs($cachedir);
+			squid_chown_recursive($cachedir, 'proxy', 'proxy');
+		}
+		else {
 			squid_chown_recursive($cachedir, 'proxy', 'proxy');
 		}
 	}
