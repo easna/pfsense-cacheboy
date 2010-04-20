@@ -99,7 +99,7 @@
 		<field>
 			<fielddescr>coss Hard disk cache size</fielddescr>
 			<fieldname>coss_harddisk_cache_size</fieldname>
-			<description>This is the amount of disk space (in megabytes) to use for cached objects. Contener for small content size specified by Object size.</description>
+			<description>This is the amount of disk space (in megabytes) to use for cached objects. Container for small content size specified by Object size.</description>
 			<type>input</type>
 
 			<default_value>50</default_value>
@@ -107,7 +107,7 @@
 		<field>
 			<fielddescr>Hard disk cache size</fielddescr>
 			<fieldname>harddisk_cache_size</fieldname>
-			<description>This is the amount of disk space (in megabytes) to use for cached objects. Contenter for large content size specified by Object size. This would use 10MB memory per 1GB when cache is full.</description>
+			<description>This is the amount of disk space (in megabytes) to use for cached objects. Container for large content size specified by Object size. This would use 10MB memory per 1GB when cache is full.</description>
 			<type>input</type>
 
 			<default_value>100</default_value>
