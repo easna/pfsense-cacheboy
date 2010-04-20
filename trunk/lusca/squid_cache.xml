@@ -99,7 +99,7 @@
 		<field>
 			<fielddescr>coss Hard disk cache size</fielddescr>
 			<fieldname>coss_harddisk_cache_size</fieldname>
-			<description>This is the amount of disk space (in megabytes) to use for cached objects.</description>
+			<description>This is the amount of disk space (in megabytes) to use for cached objects. Contener for small content size specified by Object size.</description>
 			<type>input</type>
 
 			<default_value>50</default_value>
@@ -107,7 +107,7 @@
 		<field>
 			<fielddescr>Hard disk cache size</fielddescr>
 			<fieldname>harddisk_cache_size</fieldname>
-			<description>This is the amount of disk space (in megabytes) to use for cached objects.</description>
+			<description>This is the amount of disk space (in megabytes) to use for cached objects. Contenter for large content size specified by Object size. This would use 10MB memory per 1GB when cache is full.</description>
 			<type>input</type>
 
 			<default_value>100</default_value>
@@ -115,7 +115,7 @@
 		<field>
 			<fielddescr>COSS Hard disk cache location</fielddescr>
 			<fieldname>coss_harddisk_cache_location</fieldname>
-			<description>For high performance put this in your fastest drive</description>
+			<description>For high performance put this in your fastest drive.</description>
 			<type>input</type>
 			<size>60</size>
 
@@ -141,7 +141,7 @@
 		<field>
 			<fielddescr>Memory cache size</fielddescr>
 			<fieldname>memory_cache_size</fieldname>
-			<description>This is the amount of physical RAM (in megabytes) to be used for negative cache and in-transit objects.  This value should not exceed more than 50% of the installed RAM. The minimum value is 1MB.</description>
+			<description>This is the amount of physical RAM (in megabytes) to be used for negative cache and in-transit objects.  This value should not exceed more than 50% of the available RAM. The minimum value is 1MB.</description>
 			<type>input</type>
 			<required/>
 			<default_value>8</default_value>
