@@ -88,18 +88,12 @@ function squid_dash_z() {
 			make_dirs($cosscachedir);
 			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
 		}
-		else {
-			squid_chown_recursive($cosscachedir, 'proxy', 'proxy');
-		}
 	}
 
 	if ($hddsystem == "aufs" || $hddsystem == "coss+aufs") {
 	$aufs = "on";
 		if (!is_dir($cachedir.'/')) {
 			make_dirs($cachedir);
-			squid_chown_recursive($cachedir, 'proxy', 'proxy');
-		}
-		else {
 			squid_chown_recursive($cachedir, 'proxy', 'proxy');
 		}
 	}
@@ -115,6 +109,7 @@ function squid_dash_z() {
 		sleep(1);
 		}
 		log_error("Creating squid cache dir and files");
+		squid_chown_recursive($cachedir, 'proxy', 'proxy');
 		mwexec("/usr/local/sbin/squid -z");
 	}
 
@@ -224,8 +219,8 @@ function squid_install_command() {
 #sleep 1
 #done
 #mount -a
-#rm -r /cache0/lost+found &
-#rm -r /cache1/lost+found &
+#rm -r /cache0/lost+found
+#rm -r /cache1/lost+found
 #fi
 
 while [ `pgrep -f "squid -D"` ]; do
