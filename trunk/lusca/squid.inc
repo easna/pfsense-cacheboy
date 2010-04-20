@@ -208,10 +208,13 @@ function squid_install_command() {
 	$rc['file'] = 'squid.sh';
 	$rc['start'] = <<<EOD
 
-#if [ ! -d "/cache1/00" ]; then
-# fsck -y /cache0 && rm -r lost+found
-# fsck -y /cache1 && rm -r lost+found
-# mount -a
+# fsck and mount before starting squid if
+# /etc/fstab configured not to check cache_dir drives
+
+#if [ ! -d "/cache1/00" ] && ! [ `/bin/pgrep -f fsck` ]; then
+#fsck -y /cache0 && rm -r lost+found
+#fsck -y /cache1 && rm -r lost+found
+#mount -a
 #fi
 
 while [ `pgrep -f "squid -D"` ]; do
