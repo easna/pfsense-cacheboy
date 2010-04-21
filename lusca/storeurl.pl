@@ -15,12 +15,12 @@ while (<>) {
 if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?(videoplayback\?id=.*?|video_id=.*?)\&(.*?)/) {
 	$z = $2; $z =~ s/video_id=/get_video?video_id=/;
 	print $x . "http://video-srv.youtube.com.SQUIDINTERNAL/" . $z . "\n";
-
-			# youtube HD itag=22
-} elsif (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?\&(itag=22).*?\&(id=[a-zA-Z0-9]*)/) {
+	
+			# youtube 1024p HD itag=37, 720p HD itag=22
+} elsif (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?\&(itag=37|itag=22).*?\&(id=[a-zA-Z0-9]*)/) {
 	print $x . "http://video-srv.youtube.com.SQUIDINTERNAL/" . $2 . "&" . $3 . "\n";
 
-			# youtube Normal screen always HD itag 35, Normal screen never HD itag 34, itag=18 <--normal?
+			# youtube 360p itag=34 ,480p itag=35 and others
 } elsif (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?\&(itag=[0-9]*).*?\&(id=[a-zA-Z0-9]*)/) {
 	print $x . "http://video-srv.youtube.com.SQUIDINTERNAL/" . $3 . "\n";
 
