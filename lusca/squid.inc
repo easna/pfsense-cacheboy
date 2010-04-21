@@ -210,17 +210,16 @@ function squid_install_command() {
 	$rc['start'] = <<<EOD
 
 # fsck and mount before starting squid if
-# /etc/fstab configured not to check cache_dir drives
+# /etc/fstab configured not to check cache_dir drives for boot time purposes
 
 #if [ ! -d "/cache1/00" ] && [ ! `/bin/pgrep -f fsck` ]; then
 #fsck -y /cache0
 #fsck -y /cache1
-#while [ `/bin/pgrep -f fsck` ]; do
-#sleep 1
-#done
 #mount -a
 #rm -r /cache0/lost+found
 #rm -r /cache1/lost+found
+#elif [ `/bin/pgrep -f fsck` ]; then
+#exit
 #fi
 
 while [ `pgrep -f "squid -D"` ]; do
