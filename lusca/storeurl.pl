@@ -91,9 +91,9 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 } elsif (m/^http:\/\/photos-[a-z].ak.fbcdn.net\/(.*)/) {
 	print $x . "http://photos.ak.fbcdn.net/" . $1  . "\n";
 
-			#general purpose for cdn servers. add above your specific servers.
-} elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
-	print $x . "http://squid-cdn-url//" . $2  . "." . $3 . "\n";
+			#for yimg.com video
+} elsif (m/^http:\/\/(.*yimg.com)\/\/(.*)\/([^\/\?\&]*\/[^\/\?\&]*\.[^\/\?\&]{3,4})(\?.*)?$/) {
+	print $x . "http://cdn.yimg.com//" . $3 . "\n";
 
 			#for yimg.com doubled
 } elsif (m/^http:\/\/(.*?)\.yimg\.com\/(.*?)\.yimg\.com\/(.*?)\?(.*)/) {
@@ -105,6 +105,11 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 	$y[0] =~ s/[a-z]+[0-9]+/cdn/;
 	$y[1] =~ s/&sig=.*//;
 	print $x . "http://" . $y[0] . ".yimg.com/"  . $y[1] . "\n";
+
+
+			#general purpose for cdn servers. add above your specific servers.
+} elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
+	print $x . "http://squid-cdn-url//" . $2  . "." . $3 . "\n";
 
 			#generic http://variable.domain.com/path/filename."ext" or "exte" with or withour "? or %"
 } elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})((\?|\%).*)?$/) {
