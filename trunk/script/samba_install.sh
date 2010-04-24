@@ -16,6 +16,7 @@ extract_config () {
 	mv /usr/local/etc/smb.conf.tmp /usr/local/etc/smb.conf
 	}
 complete () {
+	echo 'samba_enable="YES"' > /etc/rc.conf.local
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
 	/usr/local/etc/rc.d/samba.sh start
 	hash -r
