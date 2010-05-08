@@ -56,8 +56,8 @@ function squid_get_real_interface_address($iface) {
 }
 
 function squid_chown_recursive($dir, $user, $group) {
-	if(file_exists($dir))
-	mwexec("/bin/rm -f $dir");
+//	if(file_exists($dir))
+//	mwexec("/bin/rm -f $dir");
 	chown($dir, $user);
 	chgrp($dir, $group);
 	$handle = opendir($dir) ;
@@ -315,8 +315,8 @@ function squid_deinstall_command() {
 		$value = trim($post[$field]);
 		unset($config['installedpackages']["$field2"]);
 	} */
-	mwexec("rm -rf $cachedir");
-	mwexec("rm -rf $cachedir2");
+//	mwexec("rm -rf $cachedir");
+//	mwexec("rm -rf $cachedir2");
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
