@@ -296,12 +296,11 @@ function squid_deinstall_command() {
 		update_status("Waiting squid to shutdown");
 		sleep(1);
 		if ($i = 5)
-		mwexec("/usr/local/sbin/squid -k shutdown");
+		mwexecbg("squid -k shutdown");
 		$i++;
 			if ($i > 10){
 			update_status("squid shutdown taking to long forcing to close all squid related applications");
-			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd'
-			);
+			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
 				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
