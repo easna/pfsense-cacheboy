@@ -1,5 +1,5 @@
 #!/bin/sh
-pkg_add -r samba3
+pkg_add -r samba33
 /usr/local/bin/testparm 
 dl_missing () {
 	echo "Downloading missing files"
