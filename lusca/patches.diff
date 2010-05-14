@@ -1,8 +1,6 @@
-Index: pkg-utils.inc
-===================================================================
---- /etc/inc/pkg-utils.inc	(revision 90)
-+++ /etc/inc/pkg-utils.inc	(working copy)
-@@ -508,2 +508,2 @@
+--- pkg-utils.inc.old	2010-05-14 21:14:21.671790000 +0800
++++ pkg-utils.inc	2010-02-28 00:38:20.000000000 +0800
+@@ -511 +511 @@
 -	start_service($pkg_info['config_file']);
 +	start_service($pkg_info['name']);
 --- /etc/inc/filterold.inc	2010-02-07 14:52:18.602237000 +0800
