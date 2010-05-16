@@ -292,12 +292,17 @@ function squid_deinstall_command() {
 	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log'); */
 	update_output_window("$plswait_txt");
 	$i = 0;
+	update_status("Waiting squid to shutdown...");
 		while (is_process_running("squid -D")) {
-		update_status("Waiting squid to shutdown");
+			if ($i == 3) {
+			update_status("Retry shutting down squid...");
+			mwexec("/bin/pkill squid");
+			sleep(3);
+			}
 		sleep(1);
 		$i++;
-			if ($i > 10){
-			update_status("squid shutdown taking to long forcing to close all squid related applications");
+			if ($i > 5){
+			update_status("shutdown taking too long. now forcing to exit...");
 			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
@@ -306,16 +311,17 @@ function squid_deinstall_command() {
 			}
 		}
 	update_status("Finishing package cleanup.");
-	// mwexec("rm -rf $logdir");
-	// this part needs confirmations. this will solve the conflict with other versions
-/*  	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
+	sleep(3);
+/* 	mwexec("rm -rf $logdir");
+	#this part needs confirmations. this will solve the conflict with other versions
+ 	$num_fields2 = array( 'squidcache','squid','squidauth','squidnac','squidtraffic','squidupstream','squidusers'
 	);
 	foreach ($num_fields2 as $field2) {
 		$value = trim($post[$field]);
 		unset($config['installedpackages']["$field2"]);
-	} */
-//	mwexec("rm -rf $cachedir");
-//	mwexec("rm -rf $cachedir2");
+	}
+	mwexec("rm -rf $cachedir");
+	mwexec("rm -rf $cachedir2"); */
 	update_status("Reloading filter...");
 	filter_configure_sync();
 }
