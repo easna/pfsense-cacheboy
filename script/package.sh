@@ -1,6 +1,6 @@
 #!/bin/sh
-private=$1
-if [ "$private" = "off" ];then {
+privaterepository=$1
+if [ "$privaterepository" = "off" ];then {
 sed 's+\("xmlrpcbaseurl" => "[0-9a-zA-Z\.\-]*",\)+"xmlrpcbaseurl" => "www.pfsense.com",+' /etc/inc/globals.inc > globals.inc.tmp
 mv globals.inc.tmp /etc/inc/globals.inc
 }
