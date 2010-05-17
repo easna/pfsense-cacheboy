@@ -13,12 +13,15 @@ Lusca-cache patched r11. Patches applied:
   # vary aware using storeurl
   # save vary object/index other than COSS (vary index will be lost on rebuild if in coss)
 === Instruction ===
-  # From your "PfSense's GUI" run this at *Diagnostics* > *Command*.
+  # From your "PfSense's GUI" run this at *Diagnostics* > *Command*. <br>_^other than lusca packages might be old. Use package off to use original repository.^_
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/package.sh && chmod +x package.sh && ./package.sh
 }}}
   # Now you may install lusca-cache at *System* > *Packages*.
-
+  # To restore or use original repository. <br>_^you can no longer see lusca updates^_
+{{{
+./package.sh off
+}}}
 *Notes*<br>
 Configurations at:<br>
 /usr/local/etc/squid/dir.conf - _customized cache_dir if you might need it most case if you have more than one coss, aufs_<br>
