@@ -644,6 +644,7 @@ function squid_resync_general() {
 	}
 	$ifaces = ($settings['active_interface'] ? $settings['active_interface'] : 'lan');
 	$real_ifaces = array();
+	$http_port_options .= ($settings['transparent_proxy'] == 'on' ? ' transparent' : '');
 	foreach (explode(",", $ifaces) as $i => $iface) {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
 		if($real_ifaces[$i][0]) {
@@ -651,7 +652,7 @@ function squid_resync_general() {
 		}
 	}
 	if (($settings['transparent_proxy'] == 'on')) {
-		$conf .= "http_port 127.0.0.1:80 transparent $http_port_options\n";
+		$conf .= "#http_port 127.0.0.1:80 $http_port_options\n";
 	}
 	$icp_port = ($settings['icp_port'] ? $settings['icp_port'] : 0);
 
@@ -1438,7 +1439,7 @@ function squid_generate_rules($type) {
 				}
 			}
 			foreach ($ifaces as $iface) {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port 3128\n";
 				log_error("lusca-cache $type rules installed in $iface Interface.");
 			}
 			/* Handle PPPOE case */
