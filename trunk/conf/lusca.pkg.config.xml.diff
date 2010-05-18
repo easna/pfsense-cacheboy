@@ -16,7 +16,7 @@ diff -u packages.org/pkg_config.7.xml packages/pkg_config.7.xml
 +      <required_version>1.2.3</required_version>
 +      <maintainer>chudy_fernandez@yahoo.com</maintainer>
 +      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
-+      <depends_on_package>lusca-cache-r14638.tbz</depends_on_package>
++      <depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
 +      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
 +      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
 +      <configurationfile>squid.xml</configurationfile>
