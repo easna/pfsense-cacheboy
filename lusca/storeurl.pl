@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 # $Rev$
 # by chudy_fernandez@yahoo.com
 # Updates at http://wiki.squid-cache.org/ConfigExamples/DynamicContent/YouTube/Discussion
@@ -116,8 +116,8 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 } elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
 	print $x . "http://squid-cdn-url//" . $2  . "." . $3 . "\n";
 
-			#generic http://variable.domain.com/path/filename."ext" or "exte" with or withour "? or %"
-} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{3,4})((\?|\%).*)?$/) {
+			#generic http://variable.domain.com/path/filename."ex" "ext" or "exte" with or withour "? or %"
+} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{2,4})((\?|\%).*)?$/) {
 	@y = ($1,$2,$3,$4);
 	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|(.*cdn.*)|(.*cache.*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
