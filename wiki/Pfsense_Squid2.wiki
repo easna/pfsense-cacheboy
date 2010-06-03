@@ -20,3 +20,8 @@ Add your content here.  Format your content with:
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squid2.7.7.sh && chmod +x squid2.7.7.sh && ./squid2.7.7.sh
 }}}
+
+  * for squid2.7.9
+{{{
+fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squid2.7.9.sh && chmod +x squid2.7.9.sh && ./squid2.7.9.sh
+}}}
