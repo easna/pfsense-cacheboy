@@ -1,79 +1,22 @@
-diff -u packages.org/pkg_config.7.xml packages/pkg_config.7.xml
---- packages.org/pkg_config.7.xml	2010-04-30 22:16:49.000000000 +0800
-+++ packages/pkg_config.7.xml	2010-04-30 22:31:01.000000000 +0800
-@@ -2,6 +2,22 @@
- <!-- pfSense packages -->
- <pfsensepkgs>
-   <packages>
-+     <package>
-+      <name>lusca-cache</name>
-+      <descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
-+      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
-+      <category>Network</category>
-+      <version>r14635</version>
-+      <status>Stable</status>
-+      <required_version>1.2.3</required_version>
-+      <maintainer>chudy_fernandez@yahoo.com</maintainer>
-+      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
-+      <depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
-+      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
-+      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
-+      <configurationfile>squid.xml</configurationfile>
-+    </package>
- 	<package>
- 		<name>anyterm</name>
- 		<descr>Ajax Interactive Shell - Have you ever wanted SSH or telnet access to your system from an internet desert - from behind a strict firewall, from an internet cafe, or even from a mobile phone? Anyterm is a combination of a web page and a process that runs on your web server that provides this access.  WARNING!  We suggest using Stunnel in combination with this package!</descr>
-diff -ur packages.org/pkg_config.8.xml packages/pkg_config.8.xml
---- packages.org/pkg_config.8.xml	2010-04-30 22:16:53.000000000 +0800
-+++ packages/pkg_config.8.xml	2010-05-08 21:07:13.329455000 +0800
-@@ -2,6 +2,23 @@
- <!-- pfSense packages -->
- <pfsensepkgs>
-   <packages>
-+     <package>
-+      <name>lusca-cache</name>
-+      <descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
-+      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
-+      <category>Network</category>
-+      <version>r14635</version>
-+      <status>Stable</status>
-+      <required_version>2.0</required_version>
-+      <maintainer>chudy_fernandez@yahoo.com</maintainer>
-+      <depends_on_package_base_url>http://pfsense-lusca.googlecode.com/files/</depends_on_package_base_url>
-+      <depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
-+      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
-+      <depends_on_package>libwww-5.4.0_4.tbz</depends_on_package>
-+      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
-+      <configurationfile>squid.xml</configurationfile>
-+    </package>
- 	<package>
- 		<name>anyterm</name>
- 		<descr>Ajax Interactive Shell - Have you ever wanted SSH or telnet access to your system from an internet desert - from behind a strict firewall, from an internet cafe, or even from a mobile phone? Anyterm is a combination of a web page and a process that runs on your web server that provides this access. WARNING!  We suggest using Stunnel in combination with this package!</descr>
-diff -u packages.org/pkg_config.xml packages/pkg_config.xml
---- packages.org/pkg_config.xml	2010-04-30 22:16:55.000000000 +0800
-+++ packages/pkg_config.xml	2010-04-30 22:31:01.000000000 +0800
-@@ -2,6 +2,22 @@
- <!-- pfSense packages -->
- <pfsensepkgs>
-   <packages>
-+     <package>
-+      <name>lusca-cache</name>
-+      <descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
-+      <website>http://www.squid-cache.org/</website>
-+      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
-+      <category>Network</category>
-+      <version>r14635</version>
-+      <status>Stable</status>
-+      <required_version>1.2.3</required_version>
-+      <maintainer>chudy_fernandez@yahoo.com</maintainer>
-+      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
-+      <depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
-+      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
-+      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
-+      <configurationfile>squid.xml</configurationfile>
-+    </package>
+diff -bu1 packages.org/pkg_config.7.xml packages/pkg_config.7.xml
+--- packages.org/pkg_config.7.xml	2010-05-30 12:32:33.824852000 +0800
++++ packages/pkg_config.7.xml	2010-05-30 12:48:01.847931000 +0800
+@@ -731,2 +731,18 @@
      <package>
-       <name>Pubkey</name>
-       <descr>pfSense release key</descr>
++		<name>lusca-cache</name>
++		<descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
++		<website>http://www.squid-cache.org/</website>
++		<pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
++		<category>Network</category>
++		<version>r14635</version>
++		<status>Stable</status>
++		<required_version>1.2.3</required_version>
++		<maintainer>chudy_fernandez@yahoo.com</maintainer>
++		<depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
++		<depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
++		<depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++		<config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++		<configurationfile>squid.xml</configurationfile>
++	</package>
++    <package>
+       <name>squid</name>
