@@ -103,7 +103,7 @@ function squid_dash_z() {
 	if (file_exists("$cosscachedir/swap.state"))
 		exec("chmod a+rw $cosscachedir/swap.state");
 
- 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on") || $hddsystem == "custom") {
+ 	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
 		while (is_process_running("squid -D")) {
 		log_error("Waiting squid to shutdown before creating squid cache dir");
 		sleep(1);
