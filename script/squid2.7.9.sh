@@ -2,7 +2,7 @@
 version=`uname -r | sed 's/\([0-9]\).*/\1/'`
 if [ "$version" = 7 ]; then
 echo "squid-2.7.9 for freebsd7.2"
-#fetch http://pfsense-cacheboy.googlecode.com/files/squid-2.7.9.tar.gz
+#fetch http://pfsense-cacheboy.googlecode.com/files/squid-2.7.9.tbz
 elif [ "$version" = 8 ]; then
 echo "not yet ported"
 exit
@@ -20,7 +20,7 @@ while [ `ps auxw | grep "squid -D" | grep -v grep |awk '{print $2}'| wc -l | awk
 done
 /etc/rc.conf_mount_rw
 /etc/rc.filter_configure_sync
-pkg_add -rf http://pfsense-cacheboy.googlecode.com/files/squid-2.7.9.tar.gz
+pkg_add -rf http://pfsense-cacheboy.googlecode.com/files/squid-2.7.9.tbz
 #fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
 sed 's:\((\$down_limit \* 1024) \. \" \)allow all:\1deny all:g' /usr/local/pkg/squid.inc > squid.inc.tmp
 mv squid.inc.tmp /usr/local/pkg/squid.inc
