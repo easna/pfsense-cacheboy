@@ -698,6 +698,17 @@ shutdown_lifetime 0 seconds
 
 EOD;
 
+	if ($settings['allow_interface'] == 'on') {
+		$src = '';
+		foreach ($real_ifaces as $iface) {
+			list($ip, $mask) = $iface;
+			$ip = long2ip(ip2long($ip) & ip2long($mask));
+			$src .= " $ip/$mask";
+		}
+		$conf .= "# Allow local network(s) on interface(s)\n";
+		$conf .= "acl localnet src $src\n";
+		$valid_acls[] = 'localnet';
+	}
 	if ($settings['disable_xforward']) $conf .= "forwarded_for off\n";
 	if ($settings['disable_via']) $conf .= "via off\n";
 	if ($settings['enable_http11']) $conf .= "server_http11 on\n";
@@ -1189,17 +1200,6 @@ EOD;
 	 }
 	}
 
-	if ($settings['allow_interface'] == 'on') {
-		$src = '';
-		foreach ($real_ifaces as $iface) {
-			list($ip, $mask) = $iface;
-			$ip = long2ip(ip2long($ip) & ip2long($mask));
-			$src .= " $ip/$mask";
-		}
-		$conf .= "# Allow local network(s) on interface(s)\n";
-		$conf .= "acl localnet src $src\n";
-		$valid_acls[] = 'localnet';
-	}	
 	$conf .= "# Default block all to be sure\n";
 	$conf .= "http_access deny all\n";
 
