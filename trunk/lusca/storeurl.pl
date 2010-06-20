@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # $Rev$
 # by chudy_fernandez@yahoo.com
-# Updates at http://wiki.squid-cache.org/ConfigExamples/DynamicContent/YouTube/Discussion
+# Youtube updates at http://wiki.squid-cache.org/ConfigExamples/DynamicContent/YouTube/Discussion
 $|=1;
 while (<>) {
     @X = split;
@@ -10,9 +10,16 @@ while (<>) {
 	$_ = $X[1];
 	$u = $X[1];
 
+			#photos-X.ak.fbcdn.net where X a-z
+if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
+	print $x . "http://photos" . $1  . "\n";
 
+			#maps.google.com
+} elsif (m/^http:\/\/(khm|mt)[0-9]?(.google.com.*)/) {
+	print $x . "http://" . $1  . $2 . "\n";
+	
 			# compatibility for old cached get_video?video_id
-if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?(videoplayback\?id=.*?|video_id=.*?)\&(.*?)/) {
+} elsif (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.google\.com).*?(videoplayback\?id=.*?|video_id=.*?)\&(.*?)/) {
 	$z = $2; $z =~ s/video_id=/get_video?video_id=/;
 	print $x . "http://video-srv.youtube.com.SQUIDINTERNAL/" . $z . "\n";
 	
@@ -65,7 +72,6 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 } elsif (m/^http:\/\/(.*?)\/(ads)\?(.*?)/) {
 	print $x . "http://" . $1 . "/" . $2  . "\n";
 
-			# spicific servers starts here....
 } elsif (m/^http:\/\/(www\.ziddu\.com.*\.[^\/]{3,4})\/(.*?)/) {
 	print $x . "http://" . $1 . "\n";
 
@@ -85,11 +91,6 @@ if (m/^http:\/\/([0-9.]{4}|.*\.youtube\.com|.*\.googlevideo\.com|.*\.video\.goog
 			#like porn hub variables url and center part of the path, filename etention 3 or 4 with or without ? at the end
 } elsif (($u =~ /tube8|pornhub|xvideos/) && (m/^http:\/\/(([A-Za-z]+[0-9-.]+)*?(\.[a-z]*)?)\.([a-z]*[0-9]?\.[^\/]{3}\/[a-z]*)(.*?)((\/[a-z]*)?(\/[^\/]*){4}\.[^\/\?]{3,4})(\?.*)?$/)) {
 	print $x . "http://cdn." . $4 . $6 . "\n";
-			#...spicific servers end here.
-
-			#photos-X.ak.fbcdn.net where X a-z
-} elsif (m/^http:\/\/photos-[a-z].ak.fbcdn.net\/(.*)/) {
-	print $x . "http://photos.ak.fbcdn.net/" . $1  . "\n";
 
 			#for yimg.com video
 } elsif (m/^http:\/\/(.*yimg.com)\/\/(.*)\/([^\/\?\&]*\/[^\/\?\&]*\.[^\/\?\&]{3,4})(\?.*)?$/) {
