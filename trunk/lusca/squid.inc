@@ -1129,7 +1129,7 @@ function squid_resync_auth() {
 
 	if(!empty($config['installedpackages']['squid']['config'][0]['custom_options'])) {
 		$custopts = explode(";", ($config['installedpackages']['squid']['config'][0]['custom_options']));
-		$conf .= "\n# Custom options\n";
+		$conf .= "# Custom options\n";
 		foreach ($custopts as $custopt) {
 			$conf .= $custopt."\n";
 		}
@@ -1204,7 +1204,7 @@ EOD;
 			$conf .= "http_access allow password $acl\n";
 	}
 
-	$conf .= "\n# Default block all to be sure\n";
+	$conf .= "# Default block all to be sure\n";
 	$conf .= "http_access deny all\n";
 
 	return $conf;
