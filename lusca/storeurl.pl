@@ -110,7 +110,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 			#youjizz. We use only domain and filename
 } elsif (($u =~ /media[0-9]{2,5}\.youjizz/) && (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\/([^\/\?\&]*)\.([^\/\?\&]{3,4})((\?|\%).*)?$/)) {
 	@y = ($1,$2,$4,$5);
-	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|(.*cdn.*)|(.*cache.*))/cdn/;
+	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|([^\.]*cdn[^\.]*)|([^\.]*cache[^\.]*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
 
 			#general purpose for cdn servers. add above your specific servers.
