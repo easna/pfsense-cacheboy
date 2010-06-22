@@ -1032,8 +1032,12 @@ function squid_resync_traffic() {
 	else
 		$perhost *= 1024;
 	$conf .= <<<EOD
-delay_pools 1
+acl partialcontent req_header Range .*
+acl limitusercon maxconn 8
+delay_pools 2
 delay_class 1 2
+delay_class 2 2
+delay_parameters 2 30000/30000	-1/-1
 delay_parameters 1 $overall/$overall $perhost/$perhost
 delay_initial_bucket_level 100
 
@@ -1075,9 +1079,9 @@ EOD;
 	}
 	else
 		$conf .= "delay_access 1 allow all\n";
+		$conf .= "#delay_access 2 allow partialcontent limitusercon\n";
 		if ($perbody != 0)
 		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
-
 	return $conf;
 }
 
