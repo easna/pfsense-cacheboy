@@ -1200,7 +1200,7 @@ EOD;
 	 $custopts = explode(";", ($config['installedpackages']['squid']['config'][0]['custom_options']));
 	 $conf .= "\n# Custom options\n";
 	 foreach ($custopts as $custopt) {
-			$conf .= $custopt."\n\n";
+			$conf .= $custopt."\n";
 	 }
 	}
 
