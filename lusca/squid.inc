@@ -1133,6 +1133,7 @@ function squid_resync_auth() {
 		foreach ($custopts as $custopt) {
 			$conf .= $custopt."\n";
 		}
+		$conf .= "\n";
 	}
 
 	$transparent_proxy = ($settingsconfig['transparent_proxy'] == 'on');
