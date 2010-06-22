@@ -1146,6 +1146,7 @@ function squid_resync_auth() {
 			$allowed = array_filter($allowed, 'squid_is_valid_acl');
 			foreach ($allowed as $acl)
 				$conf .= "http_access allow $acl\n";
+			$conf .= "\n";
 		}
 	}
 	else {
