@@ -654,7 +654,7 @@ function squid_resync_general() {
 		}
 	}
 	if (($settings['transparent_proxy'] == 'on')) {
-		$conf .= "#http_port 127.0.0.1:80 $http_port_options\n";
+		$conf .= "http_port 127.0.0.1:80 $http_port_options\n";
 	}
 	$icp_port = ($settings['icp_port'] ? $settings['icp_port'] : 0);
 
@@ -1450,7 +1450,7 @@ function squid_generate_rules($type) {
 				}
 			}
 			foreach ($ifaces as $iface) {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port 3128\n";
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
 				log_error("lusca-cache $type rules installed in $iface Interface.");
 			}
 			/* Handle PPPOE case */
