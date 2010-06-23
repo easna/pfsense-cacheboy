@@ -1015,12 +1015,12 @@ function squid_resync_traffic() {
 	// Only apply throttling past 10MB
 	// XXX: Should this really be hardcoded?
 	$threshold = 10 * 1024 * 1024;
-	$overall = $settings['overall_throttling'];
+	$overall = ($settings['overall_throttling'] ? $settings['overall_throttling'] : 0);
 	if (!isset($overall) || ($overall == 0))
 		$overall = -1;
 	else
 		$overall *= 1024;
-	$perhost = $settings['perhost_throttling'];
+	$perhost = ($settings['perhost_throttling'] ? $settings['perhost_throttling'] : 0);
 	if (!isset($perhost) || ($perhost == 0))
 		$perhost = -1;
 	else
@@ -1075,7 +1075,7 @@ EOD;
 	else
 		$conf .= "delay_access 1 allow all\n";
 		$conf .= "#delay_access 2 allow partialcontent limitusercon\n";
-		if ($perbody != 0)
+		if ($perbody > 0)
 		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
 	}
 	return $conf;
