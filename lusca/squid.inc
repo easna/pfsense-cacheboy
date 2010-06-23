@@ -505,9 +505,11 @@ function squid_validate_nac($post, $input_errors) {
 function squid_validate_traffic($post, $input_errors) {
 	$num_fields = array(	'max_download_size' => 'Maximum download size',
 				'max_upload_size' => 'Maximum upload size',
-				'perhost_throttling' => 'Per-host bandwidth throttling',
-				'overall_throttling' => 'Overall bandwidth throttling',
 	);
+/* 	if ($post['enable_delay_pool']) {
+	$num_fields['perhost_throttling'] = 'Per-host bandwidth throttling';
+	$num_fields['overall_throttling'] = 'Overall bandwidth throttling';
+	} */
 	foreach ($num_fields as $field => $name) {
 		$value = trim($post[$field]);
 		if (!is_numeric($value) || ($value < 0))
@@ -1023,6 +1025,7 @@ function squid_resync_traffic() {
 		$perhost = -1;
 	else
 		$perhost *= 1024;
+	if ($settings['enable_delay_pool'] == 'on') {
 	$conf .= <<<EOD
 acl partialcontent req_header Range .*
 acl limitusercon maxconn 8
@@ -1074,6 +1077,7 @@ EOD;
 		$conf .= "#delay_access 2 allow partialcontent limitusercon\n";
 		if ($perbody != 0)
 		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
+	}
 	return $conf;
 }
 

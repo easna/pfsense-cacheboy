@@ -82,6 +82,14 @@
 	</tabs>
 	<fields>
 		<field>
+			<fielddescr>Enable Delay Pool</fielddescr>
+			<fieldname>enable_delay_pool</fieldname>
+			<description>This option enables the delay pool. Disable if you have custom delay pool.</description>
+			<type>checkbox</type>
+			<enablefields>overall_throttling,perhost_throttling,bodymaxsize_throttling,throttle_specific</enablefields>
+			<required/>
+		</field>
+		<field>
 			<fielddescr>Maximum download size</fielddescr>
 			<fieldname>max_download_size</fieldname>
 			<description>Limit the maximum total download size to the size specified here (in kilobytes). Set to 0 to disable.</description>
@@ -102,7 +110,6 @@
 			<fieldname>overall_throttling</fieldname>
 			<description>This value specifies (in kilobytes per second) the bandwidth throttle for downloads. Users will gradually have their download speed increased according to this value. Set to 0 to disable bandwidth throttling.</description>
 			<type>input</type>
-			<required/>
 			<default_value>0</default_value>
 		</field>
 		<field>
@@ -110,7 +117,6 @@
 			<fieldname>perhost_throttling</fieldname>
 			<description>This value specifies the download throttling per host. Set to 0 to disable this.</description>
 			<type>input</type>
-			<required/>
 			<default_value>0</default_value>
 		</field>
 		<field>
@@ -118,7 +124,6 @@
 			<fieldname>bodymaxsize_throttling</fieldname>
 			<description>Throttling contents bigger than the body size in KB . Set to 0 to disable this.</description>
 			<type>input</type>
-			<required/>
 			<default_value>0</default_value>
 		</field>
 		<field>
