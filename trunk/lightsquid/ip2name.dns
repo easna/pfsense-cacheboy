@@ -1,0 +1,68 @@
+#contributor: esl
+#resolve hostname, cache it for speedup
+# -- vim: filetype=perl
+
+use Net::DNS::Resolver;
+    
+my $res = Net::DNS::Resolver->new(
+               nameservers => [qw(127.0.0.1)], # specify your own here
+               udp_timeout => 2,
+               retry       => 1,
+              #debug       => 1,
+          );
+
+sub StartIp2Name() {
+  my $body = ReadDHCPConfig();
+
+  while ($body =~ m/(\#[^\n]*\n)?lease ([0-9.]*)\s?\{(.*?)\}/sig) {
+    my $tmp=$3;
+    my $ip=$2;
+    $tmp =~ m/client-hostname "(.*)"/;
+    my $comp=$1;
+
+    if ($comp ne ""){
+        $hIP{$ip}=$comp;
+			$id = $comp;
+	$hRealName{$id}=$comp if ($user ne "");
+    }
+  }
+}
+
+sub Ip2Name($$$) {
+# $Lhost,$user,$Ltimestamp
+  my $ip=shift;
+  if (!defined $hIP{$ip}) {
+  
+  
+	if (my $pkt = $res->query($ip)) {
+		for my $answer ( $pkt->answer() ) {
+			my $type = $answer->type();
+			if ($type eq "PTR") {
+				$user = $answer->ptrdname();
+			} elsif ($type eq "A") {
+				$user = $answer->name();
+			}
+		}
+	} else {
+		$user=$ip;
+	}
+
+    $hIP{$ip}=$user;
+  }
+  return $hIP{$ip};
+}
+
+sub StopIp2Name() {
+}
+
+sub ReadDHCPConfig() {
+  local $/;
+  my $file;
+  open FFAAAA,"<","/var/dhcpd/var/db/dhcpd.leases";
+  $file=<FFAAAA>;
+  close FFAAAA;
+  return $file;
+}
+
+#warning !!!!
+1;
