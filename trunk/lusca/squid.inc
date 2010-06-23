@@ -650,7 +650,7 @@ function squid_resync_general() {
 	foreach (explode(",", $ifaces) as $i => $iface) {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
 		if($real_ifaces[$i][0]) {
-			$conf .= "http_port {$real_ifaces[$i][0]}:$port $http_port_options\n";
+			$conf .= "http_port {$real_ifaces[$i][0]}:$port\n";
 		}
 	}
 	if (($settings['transparent_proxy'] == 'on')) {
