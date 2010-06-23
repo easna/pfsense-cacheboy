@@ -1027,6 +1027,7 @@ function squid_resync_traffic() {
 		$perhost *= 1024;
 	if ($settings['enable_delay_pool'] == 'on') {
 	$conf .= <<<EOD
+
 acl partialcontent req_header Range .*
 acl limitusercon maxconn 8
 delay_pools 2

@@ -87,7 +87,7 @@
 			<description>This option enables the delay pool. Disable if you have custom delay pool.</description>
 			<type>checkbox</type>
 			<enablefields>overall_throttling,perhost_throttling,bodymaxsize_throttling,throttle_specific</enablefields>
-			<required/>
+			<default_value>on</default_value>/>
 		</field>
 		<field>
 			<fielddescr>Maximum download size</fielddescr>
