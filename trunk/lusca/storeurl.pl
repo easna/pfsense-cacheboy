@@ -108,7 +108,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 	print $x . "http://" . $y[0] . ".yimg.com/"  . $y[1] . "\n";
 			
 			#youjizz. We use only domain and filename
-} elsif (($u =~ /media[0-9]{2,5}\.youjizz/) && (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\/([^\/\?\&]*)\.([^\/\?\&]{3,4})((\?|\%).*)?$/)) {
+} elsif (($u =~ /media[0-9]{2,5}\.youjizz/) && (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\/([^\/\?\&]*)\.([\w\d]]{3,4})/)) {
 	@y = ($1,$2,$4,$5);
 	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|([^\.]*cdn[^\.]*)|([^\.]*cache[^\.]*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
@@ -117,8 +117,8 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 } elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
 	print $x . "http://squid-cdn-url//" . $2  . "." . $3 . "\n";
 
-			#generic http://variable.domain.com/path/filename."ex", "ext" or "exte" with or withour "? or %"
-} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([^\/\?\&]{2,4})((\?|\%).*)?$/) {
+			#generic http://variable.domain.com/path/filename."ex", "ext" or "exte"
+} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([\w\d]{2,4}).*?$/) {
 	@y = ($1,$2,$3,$4);
 	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|(.*cdn.*)|(.*cache.*))/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
@@ -128,7 +128,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 	print $x . "http://cdn." . $3 . "." . $4 . "/" . $5 .  "\n";
 
 			# spicific extention that ends with ?
-} elsif (m/^http:\/\/(.*?)\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|on2)(.*)/) {
+} elsif (m/^http:\/\/(.*?)\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|on2)/) {
 	print $x . "http://" . $1 . "/" . $2  . "." . $3 . "\n";
 
 			# all that ends with ;
