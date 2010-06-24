@@ -95,7 +95,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 			#for yimg.com video
 } elsif (m/^http:\/\/(.*yimg.com)\/\/(.*)\/([^\/\?\&]*\/[^\/\?\&]*\.[^\/\?\&]{3,4})(\?.*)?$/) {
 	print $x . "http://cdn.yimg.com//" . $3 . "\n";
-
+	
 			#for yimg.com doubled
 } elsif (m/^http:\/\/(.*?)\.yimg\.com\/(.*?)\.yimg\.com\/(.*?)\?(.*)/) {
 	print $x . "http://cdn.yimg.com/"  . $3 . "\n";
@@ -103,7 +103,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 			#for yimg.com with &sig=
 } elsif (m/^http:\/\/(.*?)\.yimg\.com\/(.*)/) {
 	@y = ($1,$2);
-	$y[0] =~ s/[a-z]+[0-9]+/cdn/;
+	$y[0] =~ s/[a-z]+([0-9]+)?/cdn/;
 	$y[1] =~ s/&sig=.*//;
 	print $x . "http://" . $y[0] . ".yimg.com/"  . $y[1] . "\n";
 			
@@ -117,19 +117,18 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 } elsif (m/^http:\/\/([0-9.]*?)\/\/(.*?)\.(.*)\?(.*?)/) {
 	print $x . "http://squid-cdn-url//" . $2  . "." . $3 . "\n";
 
+			# spicific extention
+# } elsif (m/^http:\/\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|wmv|3gp|mp(4|3)|exe|msi|zip|on2|mar|swf).*?/) {
+	# @y = ($1,$2);
+	# $y[0] =~ s/([a-zA-A]+[0-9]+(-[a-zA-Z])?|cdn[\d]*|cache[\d]*)/cdn/;
+	# print $x . "http://" . $y[0] . "." . $y[1] . "\n";
+
 			#generic http://variable.domain.com/path/filename."ex", "ext" or "exte"
-} elsif (m/^http:\/\/(.*)(\.[^\.\-]*?\..*?)\/(.*)\.([\w\d]{2,4}).*?$/) {
+			#http://cdn1-28.projectplaylist.com
+} elsif (m/^http:\/\/(.*?)(\.[^\.\-]*?\..*?)\/([^\?\&\=\%]*)\.([\w\d]{2,4})\??.*$/) {
 	@y = ($1,$2,$3,$4);
-	$y[0] =~ s/(([a-zA-A]+[0-9]+(-[a-zA-Z])?$)|(.*cdn.*)|(.*cache.*))/cdn/;
+	$y[0] =~ s/((cache|cdn)[-\d]*)|([a-zA-A]+-?[0-9]+(-[a-zA-Z]*)?)/cdn/;
 	print $x . "http://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
-
-			# generic http://variable.domain.com/...
-} elsif (m/^http:\/\/(([A-Za-z]+[0-9-]+)*?|.*cdn.*|.*cache.*)\.(.*?)\.(.*?)\/(.*)$/) {
-	print $x . "http://cdn." . $3 . "." . $4 . "/" . $5 .  "\n";
-
-			# spicific extention that ends with ?
-} elsif (m/^http:\/\/(.*?)\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|on2)/) {
-	print $x . "http://" . $1 . "/" . $2  . "." . $3 . "\n";
 
 			# all that ends with ;
 } elsif (m/^http:\/\/(.*?)\/(.*?)\;(.*)/) {
