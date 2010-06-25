@@ -646,7 +646,7 @@ function squid_resync_general() {
 	}
 	$ifaces = ($settings['active_interface'] ? $settings['active_interface'] : 'lan');
 	$real_ifaces = array();
-	$http_port_options .= ($settings['transparent_proxy'] == 'on' ? ' transparent' : '');
+	$http_port_options .= ($settings['transparent_proxy'] == 'on' ? 'transparent' : '');
 	if (!empty($port))
 	foreach (explode(",", $ifaces) as $i => $iface) {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
