@@ -120,7 +120,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 			# spicific extention
 # } elsif (m/^http:\/\/(.*?)\.(jp(e?g|e|2)|gif|png|tiff?|bmp|ico|flv|wmv|3gp|mp(4|3)|exe|msi|zip|on2|mar|swf).*?/) {
 	# @y = ($1,$2);
-	# $y[0] =~ s/([a-zA-A]+[0-9]+(-[a-zA-Z])?|cdn[\d]*|cache[\d]*)/cdn/;
+	# $y[0] =~ s/((cache|cdn)[-\d]*)|([a-zA-A]+-?[0-9]+(-[a-zA-Z]*)?)/cdn/;
 	# print $x . "http://" . $y[0] . "." . $y[1] . "\n";
 
 			#generic http://variable.domain.com/path/filename."ex", "ext" or "exte"
