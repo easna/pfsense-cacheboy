@@ -234,7 +234,6 @@
 			<description>This is the port the proxy server will listen on.</description>
 			<type>input</type>
 			<size>5</size>
-			<required/>
 			<default_value>3128</default_value>
 		</field>
 		<field>
