@@ -86,7 +86,6 @@
 			<fieldname>enable_delay_pool</fieldname>
 			<description>This option enables the delay pool. Disable if you have custom delay pool.</description>
 			<type>checkbox</type>
-			<enablefields>overall_throttling,perhost_throttling,bodymaxsize_throttling,throttle_specific</enablefields>
 			<default_value>on</default_value>
 		</field>
 		<field>
