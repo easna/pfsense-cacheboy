@@ -642,11 +642,11 @@ function squid_resync_general() {
 
 	$port = ($settings['proxy_port']);
 	if ($settings['enable_http11'] == 'on') {
-	$http_port_options = "http11";
+	$http_port_options = "http11 ";
 	}
 	$ifaces = ($settings['active_interface'] ? $settings['active_interface'] : 'lan');
 	$real_ifaces = array();
-	$http_port_options .= ($settings['transparent_proxy'] == 'on' ? 'transparent' : '');
+	$http_port_options .= ($settings['transparent_proxy'] == 'on' ? 'transparent ' : '');
 	if (!empty($port))
 	foreach (explode(",", $ifaces) as $i => $iface) {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
