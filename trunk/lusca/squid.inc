@@ -654,11 +654,9 @@ function squid_resync_general() {
 			$conf .= "http_port {$real_ifaces[$i][0]}:$port\n";
 		}
 	}
-	if (($settings['transparent_proxy'] == 'on')) {
+	if (($settings['transparent_proxy'] == 'on') || (!$port > 0))
 		$conf .= "http_port 127.0.0.1:80 $http_port_options\n";
-	}
 	$icp_port = ($settings['icp_port'] ? $settings['icp_port'] : 0);
-
 	$pidfile = "{$g['varrun_path']}/squid.pid";
 	$language = ($settings['error_language'] ? $settings['error_language'] : 'English');
 	$errordir = SQUID_CONFBASE . '/errors/' . $language;
