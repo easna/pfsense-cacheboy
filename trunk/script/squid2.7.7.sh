@@ -20,10 +20,10 @@ done
 /etc/rc.conf_mount_rw
 /etc/rc.filter_configure_sync
 tar -C / -xzvf freebsd*.X.squid.tar.gz
-fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
+#fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/squidsync && chmod +x squidsync
 sed 's:\((\$down_limit \* 1024) \. \" \)allow all:\1deny all:g' /usr/local/pkg/squid.inc > squid.inc.tmp
 mv squid.inc.tmp /usr/local/pkg/squid.inc
-./squidsync
+#./squidsync
 #/usr/local/etc/rc.d/squid.sh start
 /usr/local/etc/rc.d/proxy_monitor.sh start &
 /etc/rc.filter_configure_sync
