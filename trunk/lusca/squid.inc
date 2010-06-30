@@ -1007,8 +1007,9 @@ function squid_resync_traffic() {
 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);
 	$perbody = ($settings['bodymaxsize_throttling'] ? $settings['bodymaxsize_throttling'] : 0);
+	if (!empty($up_limit));
 	$conf .= 'request_body_max_size ' . ($up_limit * 1024) . " allow all\n";
-
+	if (!empty($down_limit));
 	$conf .= 'reply_body_max_size ' . ($down_limit * 1024) . " deny all\n";
 
 	// Only apply throttling past 10MB
