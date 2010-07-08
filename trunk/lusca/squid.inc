@@ -1465,8 +1465,11 @@ function squid_generate_rules($type) {
 				}
 			}
 			foreach ($ifaces as $iface) {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port 3128\n";
-				log_error("lusca-cache $type rules installed in $iface Interface.");
+			if ($squid_conf['proxy_port'] > 0) {
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port $port\n";
+			} else {
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 80\n";
+			}
 			}
 			/* Handle PPPOE case */
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
