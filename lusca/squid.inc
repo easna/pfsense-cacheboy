@@ -396,7 +396,13 @@ function squid_validate_general($post, $input_errors) {
 				$input_errors[] = "The entry '$host' is not a valid IP address";
 		}
 	}
-
+	foreach (array('defined_ip_proxy_off_dist') as $hosts) {
+		foreach (explode(";", $post[$hosts]) as $host) {
+			$host = trim($host);
+			if (!empty($host) && !is_ipaddr($host))
+				$input_errors[] = "The entry '$host' is not a valid IP address";
+		}
+	}
   if(!empty($post['dns_nameservers'])) {
 	 $altdns = explode(";", ($post['dns_nameservers']));
 	 foreach ($altdns as $dnssrv) {
@@ -651,7 +657,7 @@ function squid_resync_general() {
 		$real_ifaces[] = squid_get_real_interface_address($iface);
 		if (!empty($port))
 		if($real_ifaces[$i][0]) {
-			$conf .= "http_port {$real_ifaces[$i][0]}:$port\n";
+			$conf .= "http_port {$real_ifaces[$i][0]}:$port $http_port_options\n";
 		}
 	}
 	if (($settings['transparent_proxy'] == 'on') || (!$port > 0))
@@ -1430,6 +1436,20 @@ function squid_generate_rules($type) {
 					$rules .= "no rdr on $iface proto tcp from any to { 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 } port 80\n";
 				}
 			}
+			if (!empty($squid_conf['defined_ip_proxy_off_dist'])) {
+				$defined_ip_proxy_off_dist = explode(";", $squid_conf['defined_ip_proxy_off_dist']);
+				$exempt_ip = "";
+				foreach ($defined_ip_proxy_off_dist as $ip_proxy_off) {
+					if(!empty($ip_proxy_off)) {
+						$ip_proxy_off = trim($ip_proxy_off);
+						$exempt_ip .= ", $ip_proxy_off";
+					}
+				}
+				$exempt_ip = substr($exempt_ip,2);
+				foreach ($ifaces as $iface) {
+					$rules .= "no rdr on $iface proto tcp from any to { $exempt_ip } port 80\n";
+				}
+			}
 			if (!empty($squid_conf['defined_ip_proxy_off'])) {
 				$defined_ip_proxy_off = explode(";", $squid_conf['defined_ip_proxy_off']);
 				$exempt_ip = "";
@@ -1445,7 +1465,7 @@ function squid_generate_rules($type) {
 				}
 			}
 			foreach ($ifaces as $iface) {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port 3128\n";
 				log_error("lusca-cache $type rules installed in $iface Interface.");
 			}
 			/* Handle PPPOE case */
