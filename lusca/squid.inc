@@ -1468,7 +1468,7 @@ function squid_generate_rules($type) {
 			if ($squid_conf['proxy_port'] > 0) {
 				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port $port\n";
 			} else {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 80\n";
+				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
 			}
 			}
 			/* Handle PPPOE case */
