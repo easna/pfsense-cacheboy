@@ -283,8 +283,8 @@ EOD;
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
 //	squid_resync(); //not needed since squid.xml will do squid_resync()
-	squid_dash_z();
-	update_status("Synchronizing configurations... done.");
+//	squid_dash_z();
+//	update_status("Synchronizing configurations... done.");
 
  	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
 	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
@@ -1283,11 +1283,11 @@ function squid_resync() {
 		if (is_process_running_full("squid -D")) {
 			mwexec("/usr/local/sbin/squid -k reconfigure");
 			filter_configure();
-			log_error("config synced and squid reconfigured");
+			log_error("squid config synced and squid reconfigured");
 		} else
 		log_error("proxy_monitor running but no \"squid -D\"");
 	} else
-	log_error("config synced");
+	log_error("squid config synced");
 
 }
 
