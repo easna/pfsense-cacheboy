@@ -1284,9 +1284,10 @@ function squid_resync() {
 			mwexec("/usr/local/sbin/squid -k reconfigure");
 			filter_configure();
 			log_error("squid reconfigured");
-		}
+		} else
+		log_error("proxy_monitor running but no \"squid -D\"");
+	} else
 	log_error("no proxy_monitor");
-	}
 
 }
 
