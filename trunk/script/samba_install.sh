@@ -18,7 +18,7 @@ extract_config () {
 complete () {
 	echo 'samba_enable="YES"' > /etc/rc.conf.local
 	mv /usr/local/etc/rc.d/samba /usr/local/etc/rc.d/samba.sh
-	/usr/local/etc/rc.d/samba.sh start
+	/usr/local/etc/rc.d/samba.sh onestart
 	hash -r
 	echo "Installation Complete!"
 	echo "Type password for root"
