@@ -38,6 +38,12 @@ require_once('service-utils.inc');
 
 if(!function_exists("filter_configure"))
 	require_once("filter.inc");
+	
+function is_process_running_full($process) {
+	$running = shell_exec("/bin/pgrep -f {$process}");
+
+        return !empty($running);
+}
 
 define('SQUID_CONFBASE', '/usr/local/etc/squid');
 define('SQUID_BASE', '/var/squid/');
@@ -105,7 +111,7 @@ function squid_dash_z() {
 		exec("chmod a+rw $cosscachedir/swap.state");
 
  	if (((!is_dir($cachedir.'/00/')) && $aufs == "on") || ((!file_exists("$cosscachedir/coss")) && $coss == "on")) {
-		while (is_process_running("squid -D")) {
+		while (is_process_running_full("squid -D")) {
 		log_error("Waiting squid to shutdown before creating squid cache dir");
 		sleep(1);
 		}
@@ -295,7 +301,7 @@ function squid_deinstall_command() {
 	update_output_window("$plswait_txt");
 	$i = 0;
 	update_status("Waiting squid to shutdown...");
-		while (is_process_running("squid -D")) {
+		while (is_process_running_full("squid -D")) {
 			if ($i == 3) {
 			update_status("Retry shutting down squid...");
 			mwexec("/bin/pkill squid");
@@ -1269,11 +1275,10 @@ function squid_resync() {
 	}
 
 	conf_mount_ro();
-
 	/* if proxy_monitor.sh is not running then this is an .xml startup trying to sync all package */
 	/* let the squid.sh starts the squid */
-	if (is_process_running("proxy_monitor.sh")) {
-		if (is_process_running("squid -D")) {
+	if (is_process_running_full("proxy_monitor.sh")) {
+		if (is_process_running_full("squid -D")) {
 			mwexec("/usr/local/sbin/squid -k reconfigure");
 			filter_configure();
 			log_error("squid reconfigured");
