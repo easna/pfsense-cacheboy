@@ -282,7 +282,7 @@ EOD;
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
 		copy(SQUID_CONFBASE . '/mime.conf.default', SQUID_CONFBASE . '/mime.conf');
 
-	squid_resync();
+//	squid_resync(); //not needed since squid.xml will do squid_resync()
 	squid_dash_z();
 	update_status("Synchronizing configurations... done.");
 
