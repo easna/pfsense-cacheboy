@@ -40,6 +40,7 @@ if(!function_exists("filter_configure"))
 	require_once("filter.inc");
 
 define('SQUID_CONFBASE', '/usr/local/etc/squid');
+define('SQUID_BASE', '/var/squid/');
 define('SQUID_ACLDIR', '/var/squid/acl');
 define('SQUID_PASSWD', '/var/etc/squid.passwd');
 
@@ -256,16 +257,17 @@ done
 EOD;
 
 	update_status("Writing rc.d files... One moment please...");
+	conf_mount_rw();
 	write_rcfile($rc);
 
 	mwexec(`"ps awux | grep proxy_monitor.sh | grep -v grep | awk '{ print $2 }' | xargs kill"`);
 	exec("chmod a+rx /usr/local/libexec/squid/dnsserver");
 
 	foreach (array(	SQUID_CONFBASE,
-			SQUID_ACLDIR, "/var/squid/log"
-	) as $dir) {
-			make_dirs($dir);
-			squid_chown_recursive($dir, 'proxy', 'proxy');
+			SQUID_ACLDIR,
+			SQUID_BASE ) as $dir) {
+		make_dirs($dir);
+		squid_chown_recursive($dir, 'proxy', 'proxy');
 	}
 
 	$confmgr = $config['system']['hostname'] . "\n";
@@ -613,6 +615,7 @@ function squid_install_cron($should_install) {
 		case true:
 			if(!$is_installed) {
 				$cron_item = array();
+				$cron_item['task_name'] = "squid_rotate_logs";
 				$cron_item['minute'] = "0";
 				$cron_item['hour'] = "0";
 				$cron_item['mday'] = "*";
@@ -1250,16 +1253,16 @@ function squid_resync() {
 
 	foreach (array(	SQUID_CONFBASE,
 			SQUID_ACLDIR,
-	) as $dir) {
+			SQUID_BASE ) as $dir) {
 			make_dirs($dir);
 			squid_chown_recursive($dir, 'proxy', 'proxy');
 	}
 
 	file_put_contents(SQUID_CONFBASE . '/squid.conf', $conf);
 
-	$log_dir = $config['installedpackages']['squid']['config'][0]['log_dir'];
+	$log_dir = $config['installedpackages']['squid']['config'][0]['log_dir'].'/';
 
-	if(!is_dir($log_dir.'/')) {
+	if(!is_dir($log_dir)) {
 		log_error("Creating squid log dir $log_dir");
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
