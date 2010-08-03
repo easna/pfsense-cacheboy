@@ -297,7 +297,7 @@ function squid_deinstall_command() {
  	$settings = &$config['installedpackages']['squid']['config'][0];
 /* 	$cachedir =($settings['harddisk_cache_location'] ? $settings['harddisk_cache_location'] : '/var/squid/cache');
 	$cachedir2 =($settings['coss_harddisk_cache_location'] ? $settings['coss_harddisk_cache_location'] : '/var/squid');
-	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log'); */
+	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/logs'); */
 	update_output_window("$plswait_txt");
 	$i = 0;
 	update_status("Waiting squid to shutdown...");
@@ -679,7 +679,7 @@ function squid_resync_general() {
 	$hostname = ($settings['visible_hostname'] ? $settings['visible_hostname'] : 'localhost');
 	$email = ($settings['admin_email'] ? $settings['admin_email'] : 'admin@localhost');
 
-	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/log');
+	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/logs');
 
 	$logdir_cache = $logdir . '/cache.log';
 	$logdir_access = ($settings['log_enabled'] == 'on' ? $logdir . '/access.log' : '/dev/null');
