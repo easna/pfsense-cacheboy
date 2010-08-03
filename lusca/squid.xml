@@ -358,6 +358,7 @@
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
 		squid_resync();
+		log_error("squid.xml config synced");
 	</custom_php_resync_config_command>
   	<filter_rules_needed>squid_generate_rules</filter_rules_needed>
 </packagegui>
