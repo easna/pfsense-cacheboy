@@ -139,6 +139,11 @@
 		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid_cache.xml</item>
 	</additional_files_needed>
 	<additional_files_needed>
+	    <prefix>/usr/local/pkg/</prefix>
+	    <chmod>0755</chmod>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/patches.diff</item>
+	</additional_files_needed>
+	<additional_files_needed>
 	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
 		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/include.conf</item>
@@ -154,9 +159,9 @@
 		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/storeurl.pl</item>
 	</additional_files_needed>
 	<additional_files_needed>
-	    <prefix>/usr/local/pkg/</prefix>
+	    <prefix>/usr/local/etc/squid/</prefix>
 	    <chmod>0755</chmod>
-		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/patches.diff</item>
+		<item>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/dir.conf</item>
 	</additional_files_needed>
 	<fields>
 		<field>
