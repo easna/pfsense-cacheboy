@@ -43,7 +43,7 @@ function is_process_running_full($process) {
 log_error("is process \"{$process}\"");
 	$running = shell_exec("/bin/pgrep -f \"{$process}\"");
 
-        return !empty($running);
+        return $running;
 }
 
 define('SQUID_CONFBASE', '/usr/local/etc/squid');
@@ -316,7 +316,7 @@ function squid_deinstall_command() {
 			}
 			if ($i = 4){
 			update_status("shutdown taking too long. now forcing to exit...$i");
-			$num_fields = array( 'proxy_monitor.sh','squid','dnsserver','unlinkd');
+			$num_fields = array('proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
 				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
