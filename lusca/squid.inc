@@ -42,7 +42,7 @@ if(!function_exists("filter_configure"))
 function is_process_running_full($process) {
 
 	$running = shell_exec("/bin/pgrep -fl \"{$process}\" | grep -v pgrep");
-	if (!empty($running) log_error("process \"{$process}\" running at $running");
+	if (!empty($running)) log_error("process \"{$process}\" running at \"$running\"");
         return !empty($running);
 }
 
@@ -316,7 +316,7 @@ function squid_deinstall_command() {
 			$num_fields = array('proxy_monitor.sh','squid -D','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
-				log_error("killing \"{$field}\" \"$value\"");
+				log_error("killing \"{$field}\"");
 				exec("pkill -f \"$field\"");
 			}
 			}
