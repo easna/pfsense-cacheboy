@@ -40,10 +40,10 @@ if(!function_exists("filter_configure"))
 	require_once("filter.inc");
 	
 function is_process_running_full($process) {
-log_error("is process \"{$process}\"");
-	$running = shell_exec("/bin/pgrep -f \"{$process}\"");
 
-        return $running;
+	$running = shell_exec("/bin/pgrep -f \"{$process}\" | grep -v pgrep");
+log_error("process \"{$process}\" running at $running");
+        return !empty($running);
 }
 
 define('SQUID_CONFBASE', '/usr/local/etc/squid');
@@ -310,11 +310,11 @@ function squid_deinstall_command() {
 			}
 		sleep(1);
 		$i++;
-			if ($i > 5){
+			if ($i > 10){
 			update_status("done $i");
 			break;
 			}
-			if ($i = 4){
+			if ($i = 5){
 			update_status("shutdown taking too long. now forcing to exit...$i");
 			$num_fields = array('proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
