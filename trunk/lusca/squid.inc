@@ -41,7 +41,7 @@ if(!function_exists("filter_configure"))
 	
 function is_process_running_full($process) {
 
-	$running = shell_exec("/bin/pgrep -f \"{$process}\" | grep -v pgrep");
+	$running = shell_exec("/bin/pgrep -fl \"{$process}\" | grep -v pgrep");
 log_error("process \"{$process}\" running at $running");
         return !empty($running);
 }
