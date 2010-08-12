@@ -289,6 +289,7 @@ EOD;
 
  	mwexec("sed s/'^kern.ipc.nmbclusters=\"0\"'/#kern.ipc.nmbclusters=\"0\"/ /boot/loader.conf > /boot/loader.conf.tmp");
 	mwexec("mv /boot/loader.conf.tmp /boot/loader.conf");
+	update_status("lusca-cache Installation complete!");
 }
 
 function squid_deinstall_command() {
@@ -310,17 +311,13 @@ function squid_deinstall_command() {
 			}
 		sleep(1);
 		$i++;
-			if ($i > 10){
-			update_status("done $i");
-			break;
-			}
 			if ($i = 5){
 			update_status("shutdown taking too long. now forcing to exit...$i");
 			$num_fields = array('proxy_monitor.sh','squid -D','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
 				log_error("killing \"{$field}\" \"$value\"");
-				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+				exec("pkill -f \"$field\"");
 			}
 			}
 		}
