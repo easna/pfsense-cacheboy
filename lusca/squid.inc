@@ -320,7 +320,7 @@ function squid_deinstall_command() {
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
 				log_error("killing \"{$field}\" \"$value\"");
-				mwexec("ps awux | grep \"$value\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
 			}
 			}
 		}
