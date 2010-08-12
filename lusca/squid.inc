@@ -42,7 +42,7 @@ if(!function_exists("filter_configure"))
 function is_process_running_full($process) {
 
 	$running = shell_exec("/bin/pgrep -fl \"{$process}\" | grep -v pgrep");
-	if (!empty($running)) log_error("process \"{$process}\" running at \"{$running}\"");
+	log_error("process \"{$process}\" running at \"{$running}\"");
         return !empty($running);
 }
 
@@ -956,6 +956,7 @@ EOD;
 	}
 	if (!empty($allowed)) {
 		$conf .= "acl allowed_subnets src $allowed\n";
+		$conf .= "http_access allow allowed_subnets\n";
 		$valid_acls[] = 'allowed_subnets';
 	}
 
