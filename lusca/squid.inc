@@ -316,10 +316,11 @@ function squid_deinstall_command() {
 			}
 			if ($i = 5){
 			update_status("shutdown taking too long. now forcing to exit...$i");
-			$num_fields = array('proxy_monitor.sh','squid','dnsserver','unlinkd');
+			$num_fields = array('proxy_monitor.sh','squid -D','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
-				mwexec("ps awux | grep \"$field\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
+				log_error("killing \"{$field}\" \"$value\"");
+				mwexec("ps awux | grep \"$value\" | grep -v \"grep\" | grep -v \"php\" | awk '{ print $2 }' | xargs kill");
 			}
 			}
 		}
