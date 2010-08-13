@@ -25,12 +25,13 @@ case $dir in
 	;;
 esac
 done
-ln -s "$dir" /usr/local/www/mrtg
 mv mrtg.cfg.tmp /usr/local/etc/mrtg/mrtg.cfg
 chown mrtg:mrtg /usr/local/etc/mrtg/mrtg.cfg
 cat mrtg.cfg | grep WorkDir
 mkdir "$dir"
 chmod a+rw "$dir"
+chown -R mrtg:mrtg "$dir"
+ln -s "$dir" /usr/local/www/mrtg
 indexmaker --output="$dir/index.html" /usr/local/etc/mrtg/mrtg.cfg
 /usr/local/etc/rc.d/mrtg_daemon.sh stop
 /usr/local/etc/rc.d/mrtg_daemon stop
