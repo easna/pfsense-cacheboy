@@ -28,7 +28,7 @@ done
 ln -s "$dir" /usr/local/www/mrtg
 mv mrtg.cfg.tmp /usr/local/etc/mrtg/mrtg.cfg
 chown mrtg:mrtg /usr/local/etc/mrtg/mrtg.cfg
-cat mrtg.cfg | grep Workdir
+cat mrtg.cfg | grep WorkDir
 mkdir "$dir"
 chmod a+rw "$dir"
 indexmaker --output="$dir/index.html" /usr/local/etc/mrtg/mrtg.cfg
