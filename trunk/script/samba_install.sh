@@ -1,4 +1,9 @@
 #!/bin/sh
+version=`uname -r | sed 's/\([0-9.]\{3\}\).*/\1/'`
+if [ "$version" = "7.1" ]; then {
+export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
+}
+fi
 pkg_add -r samba33
 /usr/local/bin/testparm 
 dl_missing () {
