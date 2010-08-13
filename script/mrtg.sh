@@ -1,12 +1,12 @@
 #!/bin/sh
-pkg_add -r mrtg
+pkg_add -r ftp://ftp.hk.freebsd.org/pub/FreeBSD/ports/i386/packages-7.1-release/All/mrtg-2.16.2,1.tbz
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/conf/mrtg.cfg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/mrtg_daemon.sh
 mv mrtg_daemon.sh /usr/local/etc/rc.d
 chmod a+x /usr/local/etc/rc.d/mrtg_daemon.sh
 chmod a+rw /var
 tae () {
-sed 's+\(^Workdir: \).*+\1'$dir'+' mrtg.cfg > mrtg.cfg.tmp
+sed 's+\(^WorkDir: \).*+\1'$dir'+' mrtg.cfg > mrtg.cfg.tmp
 break
 }
 while :
