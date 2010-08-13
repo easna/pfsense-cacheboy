@@ -1,5 +1,10 @@
 #!/bin/sh
-pkg_add -r ftp://ftp.hk.freebsd.org/pub/FreeBSD/ports/i386/packages-7.1-release/All/mrtg-2.16.2,1.tbz
+version=`uname -r | sed 's/\([0-9.]\{3\}\).*/\1/'`
+if [ "$version" = "7.1" ]; then {
+export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
+}
+fi
+pkg_add -r mrtg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/conf/mrtg.cfg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/mrtg_daemon.sh
 mv mrtg_daemon.sh /usr/local/etc/rc.d
