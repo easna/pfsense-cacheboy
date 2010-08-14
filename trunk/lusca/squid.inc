@@ -64,7 +64,7 @@ function squid_get_real_interface_address($iface) {
 }
 
 function squid_chown_recursive($dir, $user, $group) {
-	exec("chown -R $usr:$group $dir");
+	exec("chown -R $user:$group $dir");
 }
 
 /* setup cache */
