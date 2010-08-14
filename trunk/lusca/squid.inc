@@ -64,22 +64,7 @@ function squid_get_real_interface_address($iface) {
 }
 
 function squid_chown_recursive($dir, $user, $group) {
-//	if(file_exists($dir))
-//	mwexec("/bin/rm -f $dir");
-	chown($dir, $user);
-	chgrp($dir, $group);
-	$handle = opendir($dir) ;
-	while (($item = readdir($handle)) !== false) {
-		if (($item != ".") && ($item != "..")) {
-			$path = "$dir/$item";
-			if (is_dir($path))
-				squid_chown_recursive($path, $user, $group);
-			else {
-				chown($path, $user);
-				chgrp($path, $group);
-			}
-		}
-	}
+	exec("chown -R $usr:$group $dir");
 }
 
 /* setup cache */
@@ -274,8 +259,7 @@ EOD;
 			SQUID_ACLDIR,
 			SQUID_BASE ) as $dir) {
 			make_dirs($dir);
-				chown($dir, 'proxy');
-				chgrp($dir, 'proxy');
+			squid_chown_recursive($dir, 'proxy', 'proxy');
 	}
 
 	$confmgr = $config['system']['hostname'] . "\n";
