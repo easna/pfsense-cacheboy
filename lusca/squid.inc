@@ -273,8 +273,9 @@ EOD;
 	foreach (array(	SQUID_CONFBASE,
 			SQUID_ACLDIR,
 			SQUID_BASE ) as $dir) {
-		make_dirs($dir);
-		squid_chown_recursive($dir, 'proxy', 'proxy');
+			make_dirs($dir);
+				chown($dir, 'proxy');
+				chgrp($dir, 'proxy');
 	}
 
 	$confmgr = $config['system']['hostname'] . "\n";
@@ -1260,13 +1261,6 @@ function squid_resync() {
 	/* make sure pinger is executable */
 	if(file_exists("/usr/local/libexec/squid/pinger"))
 		exec("chmod a+x /usr/local/libexec/squid/pinger");
-
-	foreach (array(	SQUID_CONFBASE,
-			SQUID_ACLDIR,
-			SQUID_BASE ) as $dir) {
-			make_dirs($dir);
-			squid_chown_recursive($dir, 'proxy', 'proxy');
-	}
 
 	file_put_contents(SQUID_CONFBASE . '/squid.conf', $conf);
 
