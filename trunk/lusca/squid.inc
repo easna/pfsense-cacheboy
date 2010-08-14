@@ -1248,9 +1248,9 @@ function squid_resync() {
 
 	file_put_contents(SQUID_CONFBASE . '/squid.conf', $conf);
 
-	$log_dir = ($config['installedpackages']['squid']['config'][0]['log_dir'] ? $config['installedpackages']['squid']['config'][0]['log_dir'] : '/var/squid/logs').'/';
+	$log_dir = ($config['installedpackages']['squid']['config'][0]['log_dir'] ? $config['installedpackages']['squid']['config'][0]['log_dir'] : '/var/squid/logs');
 
-	if(!is_dir($log_dir)) {
+	if(!is_dir($log_dir.'/')) {
 		log_error("Creating squid log dir $log_dir");
 		make_dirs($log_dir);
 		squid_chown_recursive($log_dir, 'proxy', 'proxy');
