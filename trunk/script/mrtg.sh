@@ -1,11 +1,16 @@
 #!/bin/sh
 version=`uname -r | sed 's/\([0-9.]\{3\}\).*/\1/'`
 if [ "$version" = "7.1" ]; then {
-echo "`uname -r` Changing Packagesite..."
+echo "Your using old `uname -r`.Changing to old Packagesite..."
 export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
 }
 fi
+perlexist=`pkg_info | grep '^perl'`
+if [ "$perlexist" != "" ] ; then {
+echo "overwrite existing perl"
 pkg_add -rf perl
+}
+fi
 pkg_add -rf mrtg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/conf/mrtg.cfg
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/mrtg_daemon.sh
@@ -34,6 +39,7 @@ mkdir "$dir"
 chmod a+rw "$dir"
 chown -R mrtg:mrtg "$dir"
 if [ "$dir" != "/usr/local/www/mrtg" ]; then {
+rm /usr/local/www/mrtg
 echo "Softlink to /usr/local/www/mrtg"
 ln -s "$dir" /usr/local/www/mrtg
 }
