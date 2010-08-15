@@ -1,6 +1,7 @@
 #!/bin/sh
 version=`uname -r | sed 's/\([0-9.]\{3\}\).*/\1/'`
 if [ "$version" = "7.1" ]; then {
+echo "`uname -r` Changing Packagesite..."
 export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
 }
 fi
@@ -28,11 +29,15 @@ esac
 done
 mv mrtg.cfg.tmp /usr/local/etc/mrtg/mrtg.cfg
 chown mrtg:mrtg /usr/local/etc/mrtg/mrtg.cfg
-cat mrtg.cfg | grep WorkDir
+cat mrtg.cfg | grep '^WorkDir'
 mkdir "$dir"
 chmod a+rw "$dir"
 chown -R mrtg:mrtg "$dir"
+if [ "$dir" != "/usr/local/www/mrtg" ]; then {
+echo "Softlink to /usr/local/www/mrtg"
 ln -s "$dir" /usr/local/www/mrtg
+}
+fi
 indexmaker --output="$dir/index.html" /usr/local/etc/mrtg/mrtg.cfg
 /usr/local/etc/rc.d/mrtg_daemon.sh stop
 /usr/local/etc/rc.d/mrtg_daemon stop
