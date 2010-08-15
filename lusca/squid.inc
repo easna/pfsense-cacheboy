@@ -941,7 +941,6 @@ EOD;
 	}
 	if (!empty($allowed)) {
 		$conf .= "acl allowed_subnets src $allowed\n";
-		$conf .= "http_access allow allowed_subnets\n";
 		$valid_acls[] = 'allowed_subnets';
 	}
 
