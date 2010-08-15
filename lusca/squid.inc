@@ -1401,7 +1401,7 @@ function squid_generate_rules($type) {
 		return;
 	}
 
-	if (($squid_conf['transparent_proxy'] != 'on') || ($squid_conf['allow_interface'] != 'on')) {
+	if ($squid_conf['transparent_proxy'] != 'on') {
 		return;
 	}
 
