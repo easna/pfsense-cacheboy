@@ -1,7 +1,7 @@
 #!/bin/sh
 version=`uname -r | sed 's/\([0-9.]\{3\}\).*/\1/'`
 if [ "$version" = "7.1" ]; then {
-echo "Your using old `uname -r`.Changing to old Packagesite..."
+echo "Your using old `uname -r` version ...Changing to old Packagesite..."
 export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
 }
 fi
