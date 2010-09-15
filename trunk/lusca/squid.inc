@@ -261,8 +261,8 @@ EOD;
 			make_dirs($dir);
 			squid_chown_recursive($dir, 'proxy', 'proxy');
 	}
-
-	$confmgr = $config['system']['hostname'] . "\n";
+	$confmgr = "127.0.0.1:80\n";
+	$confmgr .= $config['system']['hostname'] . "\n";
 	file_put_contents(SQUID_CONFBASE . '/cachemgr.conf', $confmgr);
 
 	if (!file_exists(SQUID_CONFBASE . '/mime.conf') && file_exists(SQUID_CONFBASE . '/mime.conf.default'))
