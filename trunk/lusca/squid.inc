@@ -1006,6 +1006,7 @@ function squid_resync_traffic() {
   if (!empty($settings['quick_abort_min']) || ($settings['quick_abort_min']) == "0") $conf .= "quick_abort_min {$settings['quick_abort_min']} KB\n";
   if (!empty($settings['quick_abort_max']) || ($settings['quick_abort_max']) == "0") $conf .= "quick_abort_max {$settings['quick_abort_max']} KB\n";
   if (!empty($settings['quick_abort_pct'])) $conf .= "quick_abort_pct {$settings['quick_abort_pct']}\n";
+  if (!empty($settings['range_offset_limit']) || ($settings['range_offset_limit']) == "0") $conf .= "range_offset_limit {$settings['range_offset_limit']} MB\n";
 
 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);

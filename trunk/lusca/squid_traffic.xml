@@ -126,6 +126,13 @@
 			<default_value>0</default_value>
 		</field>
 		<field>
+			<fielddescr>Partial Content Cache limit</fielddescr>
+			<fieldname>range_offset_limit</fieldname>
+			<description>Limit size in MB. A value of -1 causes Lusca to always fetch the object from the beginning so that it may cache the result. (2.0 style). A value of 0 causes Squid to never fetch more than the client client requested.</description>
+			<type>input</type>
+			<default_value>0</default_value>
+		</field>
+		<field>
 			<fielddescr>Throttle only specific extensions</fielddescr>
 			<fieldname>throttle_specific</fieldname>
 			<description>Leave this checked to be able to choose the extensions that throttling will be applied to. Otherwise, all files will be throttled.</description>
