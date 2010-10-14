@@ -1263,11 +1263,11 @@ function squid_resync() {
 		if (is_process_running_full("squid -D")) {
 			mwexec("/usr/local/sbin/squid -k reconfigure");
 			filter_configure();
-			log_error("squid config synced and squid reconfigured");
+			log_error("squid config synchronized and squid reconfigured");
 		} else
 		log_error("proxy_monitor running but no \"squid -D\"");
 	} else
-	log_error("squid config synced");
+	log_error("squid config synchronized");
 
 }
 
