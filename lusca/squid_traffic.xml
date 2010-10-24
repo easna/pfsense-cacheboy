@@ -133,6 +133,13 @@
 			<default_value>0</default_value>
 		</field>
 		<field>
+			<fielddescr>Partial Content throttling</fielddescr>
+			<fieldname>partialcontent_throttling</fieldname>
+			<description>This value specifies the download throttling per partial content. Set to 0 to disable this.</description>
+			<type>input</type>
+			<default_value>0</default_value>
+		</field>
+		<field>
 			<fielddescr>Throttle only specific extensions</fielddescr>
 			<fieldname>throttle_specific</fieldname>
 			<description>Leave this checked to be able to choose the extensions that throttling will be applied to. Otherwise, all files will be throttled.</description>

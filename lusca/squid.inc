@@ -926,6 +926,7 @@ acl sslports port 443 563 $webgui_port
 acl manager proto cache_object
 acl purge method PURGE
 acl connect method CONNECT
+acl partialcontent_req req_header Range .*
 #acl dynamic urlpath_regex cgi-bin \?
 include /usr/local/etc/squid/include.conf
 
@@ -1011,6 +1012,7 @@ function squid_resync_traffic() {
 	$up_limit = ($settings['max_upload_size'] ? $settings['max_upload_size'] : 0);
 	$down_limit = ($settings['max_download_size'] ? $settings['max_download_size'] : 0);
 	$perbody = ($settings['bodymaxsize_throttling'] ? $settings['bodymaxsize_throttling'] : 0);
+	$perpartial = ($settings['partialcontent_throttling'] ? $settings['partialcontent_throttling'] : 0);
 	if (!empty($up_limit));
 	$conf .= 'request_body_max_size ' . ($up_limit * 1024) . " allow all\n";
 	if (!empty($down_limit));
@@ -1029,12 +1031,18 @@ function squid_resync_traffic() {
 		$perhost = -1;
 	else
 		$perhost *= 1024;
+	if (!isset($perpartial) || ($perpartial == 0))
+		$perpartial = -1;
+	else
+		$perpartial *= 1024;
 	if ($settings['enable_delay_pool'] == 'on') {
 	$conf .= <<<EOD
 
-delay_pools 1
+delay_pools 2
 delay_class 1 2
 delay_parameters 1 $overall/$overall $perhost/$perhost
+delay_class 2 1
+delay_parameters 2 $perpartial/$perpartial
 delay_initial_bucket_level 100
 
 EOD;
@@ -1076,7 +1084,9 @@ EOD;
 	else
 		$conf .= "delay_access 1 allow all\n";
 		if ($perbody > 0)
-		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow all\n";
+		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow !partialcontent_req\n";
+		$conf .= "delay_access 2 allow partialcontent_req\n";
+		$conf .= "delay_access 2 deny all\n";
 	}
 	return $conf;
 }
