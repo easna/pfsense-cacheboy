@@ -298,7 +298,7 @@ function squid_deinstall_command() {
 		$i++;
 			if ($i = 5){
 			update_status("shutdown taking too long. now forcing to exit...$i");
-			$num_fields = array('proxy_monitor.sh','squid -D','dnsserver','unlinkd');
+			$num_fields = array('proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
 				$value = trim($post[$field]);
 				log_error("killing \"{$field}\"");
