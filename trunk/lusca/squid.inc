@@ -1029,23 +1029,32 @@ function squid_resync_traffic() {
 	$perhost = ($settings['perhost_throttling'] ? $settings['perhost_throttling'] : 0);
 	if (!isset($perhost) || ($perhost == 0))
 		$perhost = -1;
-	else
+	else {
 		$perhost *= 1024;
+		}
+		$delay_pools = 1;
 	if (!isset($perpartial) || ($perpartial == 0))
 		$perpartial = -1;
-	else
+	else {
+		$delay_pools = 2;
 		$perpartial *= 1024;
+		}
 	if ($settings['enable_delay_pool'] == 'on') {
 	$conf .= <<<EOD
-
-delay_pools 2
+delay_pools $delay_pools
 delay_class 1 2
 delay_parameters 1 $overall/$overall $perhost/$perhost
+delay_initial_bucket_level 100
+EOD;
+	if ($delay_pools == 2) {
+	$conf .= <<<EOD
 delay_class 2 1
 delay_parameters 2 $perpartial/$perpartial
-delay_initial_bucket_level 100
-
 EOD;
+	$bodymaxsize = "!partialcontent_req";
+	}
+	else 
+	$bodymaxsize = "all";
 
 	if(! empty($settings['unrestricted_hosts'])) {
 		foreach (array('unrestricted_hosts') as $item) {
@@ -1084,9 +1093,11 @@ EOD;
 	else
 		$conf .= "delay_access 1 allow all\n";
 		if ($perbody > 0)
-		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow !partialcontent_req\n";
+		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow $bodymaxsize \n";
+		if (delay_pools == 2) {
 		$conf .= "delay_access 2 allow partialcontent_req\n";
 		$conf .= "delay_access 2 deny all\n";
+		}
 	}
 	return $conf;
 }
