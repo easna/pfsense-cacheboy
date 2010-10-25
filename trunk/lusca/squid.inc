@@ -288,7 +288,7 @@ function squid_deinstall_command() {
 	update_output_window("$plswait_txt");
 	$i = 0;
 	update_status("Waiting squid to shutdown...");
-		while (is_process_running_full("\(squid\)\ -D")) {
+		while (is_process_running_full("squid -D")) {
 			if ($i == 3) {
 			update_status("Retry shutting down squid...");
 			mwexec("/bin/pkill squid");
@@ -1041,15 +1041,19 @@ function squid_resync_traffic() {
 		}
 	if ($settings['enable_delay_pool'] == 'on') {
 	$conf .= <<<EOD
+
 delay_pools $delay_pools
 delay_class 1 2
 delay_parameters 1 $overall/$overall $perhost/$perhost
 delay_initial_bucket_level 100
+
 EOD;
 	if ($delay_pools == 2) {
 	$conf .= <<<EOD
+
 delay_class 2 1
 delay_parameters 2 $perpartial/$perpartial
+
 EOD;
 	$bodymaxsize = "!partialcontent_req";
 	}
