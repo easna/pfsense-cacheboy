@@ -288,15 +288,15 @@ function squid_deinstall_command() {
 	update_output_window("$plswait_txt");
 	$i = 0;
 	update_status("Waiting squid to shutdown...");
-		while (is_process_running_full("squid -D")) {
+		while (is_process_running_full("squid")) {
 			if ($i == 3) {
 			update_status("Retry shutting down squid...");
-			mwexec("/bin/pkill squid");
+			mwexec("/usr/local/sbin/squid -k shutdown");
 			sleep(3);
 			}
 		sleep(1);
 		$i++;
-			if ($i = 5){
+			if ($i = 10){
 			update_status("shutdown taking too long. now forcing to exit...$i");
 			$num_fields = array('proxy_monitor.sh','squid','dnsserver','unlinkd');
 			foreach ($num_fields as $field) {
