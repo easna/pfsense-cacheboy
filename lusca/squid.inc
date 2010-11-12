@@ -713,7 +713,7 @@ EOD;
 		$conf .= "acl localnet src $src\n";
 		$valid_acls[] = 'localnet';
 	}
-	if ($settings['disable_xforward']) $conf .= "forwarded_for off\n";
+	if ($settings['disable_xforward']) $conf .= "forwarded_for transparent\n";
 	if ($settings['disable_via']) $conf .= "via off\n";
 	if ($settings['enable_http11']) $conf .= "server_http11 on\n";
 	if ($settings['disable_squidversion']) $conf .= "httpd_suppress_version_string on\n";
