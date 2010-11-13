@@ -289,7 +289,7 @@ function squid_deinstall_command() {
 	$i = 0;
 	update_status("Waiting squid to shutdown...");
 		while (is_process_running_full("\(squid\)\ -D")) {
-			if ($i == 5) {
+			if ($i == 30) {
 			update_status("Retry shutting down squid...");
 			mwexec("/usr/local/sbin/squid -k shutdown");
 			sleep(5);
