@@ -132,7 +132,7 @@ if (m/^http:\/\/photos-[a-z]?(.ak.fbcdn.net.*)/) {
 			#generic http://variable.domain.com/path/filename."ex", "ext" or "exte"
 			#http://cdn1-28.projectplaylist.com
 			#http://s1sdlod041.bcst.cdn.s1s.yimg.com
-} elsif (m/^http:\/\/(.*?)(\.[^\.\-]*?\..*?)\/([^\?\&\=\%]*)\.([\w\d]{2,4})\??.*$/) {
+} elsif (m/^http:\/\/(.*?)(\.[^\.\-]*?\..*?)\/([^\?\&\=]*)\.([\w\d]{2,4})\??.*$/) {
 	@y = ($1,$2,$3,$4);
 	$y[0] =~ s/([a-z][0-9][a-z]dlod[\d]{3})|((cache|cdn)[-\d]*)|([a-zA-A]+-?[0-9]+(-[a-zA-Z]*)?)/cdn/;
 	print $x . "storeurl://" . $y[0] . $y[1] . "/" . $y[2] . "." . $y[3] . "\n";
