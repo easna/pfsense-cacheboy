@@ -1501,8 +1501,8 @@ function squid_generate_rules($type) {
 		case 'rule':
 			foreach ($ifaces as $iface) {
 				$rules .= "# Setup squid pass rules for proxy\n";
-				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
-				$rules .= "#pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
+				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port 80 flags S/SA keep state\n";
+				$rules .= "pass in quick on $iface proto tcp from any to !($iface) port $port flags S/SA keep state\n";
 				$rules .= "\n";
 			};
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
