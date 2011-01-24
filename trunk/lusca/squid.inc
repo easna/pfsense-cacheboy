@@ -1098,7 +1098,7 @@ EOD;
 		$conf .= "delay_access 1 allow all\n";
 		if ($perbody > 0)
 		$conf .= 'delay_body_max_size ' . ($perbody * 1024) . " 1 allow $bodymaxsize \n";
-		if (delay_pools == 2) {
+		if ($delay_pools == 2) {
 		$conf .= "delay_access 2 allow partialcontent_req\n";
 		$conf .= "delay_access 2 deny all\n";
 		}
