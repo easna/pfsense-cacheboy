@@ -1,22 +1,80 @@
-diff -bu1 packages.org/pkg_config.7.xml packages/pkg_config.7.xml
---- packages.org/pkg_config.7.xml	2010-05-30 12:32:33.824852000 +0800
-+++ packages/pkg_config.7.xml	2010-05-30 12:48:01.847931000 +0800
-@@ -731,2 +731,18 @@
-     <package>
+--- packages.org/pkg_config.7.xml	2011-03-06 01:36:25.000000000 +0800
++++ packages/pkg_config.7.xml	2011-03-06 01:48:01.754608000 +0800
+@@ -2,6 +2,22 @@
+ <!-- pfSense packages -->
+ <pfsensepkgs>
+   <packages>
++       <package>
 +		<name>lusca-cache</name>
 +		<descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
 +		<website>http://www.squid-cache.org/</website>
 +		<pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
 +		<category>Network</category>
-+		<version>r14635</version>
++		<version>r14850</version>
 +		<status>Stable</status>
 +		<required_version>1.2.3</required_version>
 +		<maintainer>chudy_fernandez@yahoo.com</maintainer>
 +		<depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
-+		<depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
++		<depends_on_package>lusca-cache-r14638.tbz</depends_on_package>
 +		<depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
 +		<config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
 +		<configurationfile>squid.xml</configurationfile>
++      </package>
+       <package>
+ 		<name>File Manager</name>
+ 		<website/>
+diff -ur packages.org/pkg_config.8.xml packages/pkg_config.8.xml
+--- packages.org/pkg_config.8.xml	2011-03-04 22:10:05.000000000 +0800
++++ packages/pkg_config.8.xml	2011-03-05 13:17:04.276585000 +0800
+@@ -7,4 +7,25 @@
+ <packages>
+ 	<package>
++		<name>lusca-cache</name>
++		<descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
++		<website>http://www.squid-cache.org/</website>
++		<pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
++		<category>Network</category>
++		<version>r14850</version>
++		<status>Beta</status>
++		<required_version>2</required_version>
++		<maintainer>chudy_fernandez@yahoo.com</maintainer>
++		<depends_on_package_base_url>http://pfsense-lusca.googlecode.com/files/</depends_on_package_base_url>
++		<depends_on_package>lusca-cache-r14850.tbz</depends_on_package>
++		<depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++		<depends_on_package>libwww-5.4.0_4.tbz</depends_on_package>
++		<build_port_path>/usr/ports/www/lusca-cache</build_port_path>
++		<build_port_path>/usr/ports/www/squid_radius_auth</build_port_path>
++		<build_port_path>/usr/ports/www/libwww</build_port_path>
++		<build_options>WITH_SQUID_KERB_AUTH=true WITH_SQUID_LDAP_AUTH=true WITH_SQUID_NIS_AUTH=true WITH_SQUID_SASL_AUTH=true WITH_SQUID_DELAY_POOLS=true WITH_SQUID_SNMP=true WITH_SQUID_CARP=true WITH_SQUID_SSL=true WITHOUT_SQUID_PINGER=true WITHOUT_SQUID_DNS_HELPER=true WITH_SQUID_HTCP=true WITH_SQUID_VIA_DB=true WITH_SQUID_CACHE_DIGESTS=true WITH_SQUID_WCCP=true WITHOUT_SQUID_WCCPV2=true WITHOUT_SQUID_STRICT_HTTP=true WITH_SQUID_IDENT=true WITH_SQUID_REFERER_LOG=true WITHOUT_SQUID_USERAGENT_LOG=true WITH_SQUID_ARP_ACL=true WITH_SQUID_PF=true WITHOUT_SQUID_IPFILTER=true WITH_SQUID_FOLLOW_XFF=true WITH_SQUID_AUFS=true WITH_SQUID_COSS=true WITH_SQUID_KQUEUE=true WITH_SQUID_LARGEFILE=true WITHOUT_SQUID_STACKTRACES=true</build_options>
++		<config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++		<configurationfile>squid.xml</configurationfile>
 +	</package>
-+    <package>
-       <name>squid</name>
++	<package>
+ 		<name>MAC-to-Vendor</name>
+ 		<descr>The package make pfSense show NIC Vendor names instead of MAC addresses in the form Asustek:xx:xx:xx, full info about MAC and vendor is available in tooltip. Applies to pages Status->Interfaces, Status->DHCP leases, Status->Wireless, Diagnostics->ARP table. Vendor names are stored in the file /usr/local/pkg/mactovendor/mac-prefixes</descr>
+diff -u packages.org/pkg_config.xml packages/pkg_config.xml
+--- packages.org/pkg_config.xml	2010-04-30 22:16:55.000000000 +0800
++++ packages/pkg_config.xml	2010-04-30 22:31:01.000000000 +0800
+@@ -2,6 +2,22 @@
+ <!-- pfSense packages -->
+ <pfsensepkgs>
+   <packages>
++     <package>
++      <name>lusca-cache</name>
++      <descr>High performance web proxy cache. Customized for Caching well known sites.</descr>
++      <website>http://www.squid-cache.org/</website>
++      <pkginfolink>http://code.google.com/p/pfsense-cacheboy/wiki/Pfsense_Lusca</pkginfolink>
++      <category>Network</category>
++      <version>r14635</version>
++      <status>Stable</status>
++      <required_version>1.2.3</required_version>
++      <maintainer>chudy_fernandez@yahoo.com</maintainer>
++      <depends_on_package_base_url>http://pfsense-cacheboy.googlecode.com/files/</depends_on_package_base_url>
++      <depends_on_package>lusca-cache-r14635.tbz</depends_on_package>
++      <depends_on_package>squid_radius_auth-1.10.tbz</depends_on_package>
++      <config_file>http://pfsense-cacheboy.googlecode.com/svn/trunk/lusca/squid.xml</config_file>
++      <configurationfile>squid.xml</configurationfile>
++    </package>
+     <package>
+       <name>Pubkey</name>
+       <descr>pfSense release key</descr>
