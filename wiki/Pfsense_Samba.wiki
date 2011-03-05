@@ -2,7 +2,8 @@
 
 = Introduction =
 
-Share files between pfsense and windows
+Share files between pfsense and windows.
+WARNING: not recommended for firewall. Security issues.
 
 
 ==== Instruction ====
