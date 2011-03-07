@@ -13,6 +13,7 @@ Lusca-cache patched r11. Patches applied:
   # vary aware using storeurl
   # save vary object/index other than COSS (vary index will be lost on rebuild if in coss)
 === Instruction ===
+*Pfsense 1.2.3 or 2.0*
   # From your "PfSense's GUI" run this at *Diagnostics* > *Command*. <br>_^other than lusca packages might be old. Use package.sh to use original repository.^_
 {{{
 fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/package.sh && chmod +x package.sh && ./package.sh
@@ -22,6 +23,9 @@ fetch http://pfsense-cacheboy.googlecode.com/svn/trunk/script/package.sh && chmo
 {{{
 ./package.sh off
 }}}
+*Pfsense 2.0*
+  # Go to the http://pfsense/pkg_mgr_settings.php
+  # then use chudy.0fees.net as your Package Repository
 *Notes*<br>
 Configurations at:<br>
 /usr/local/etc/squid/dir.conf - _customized cache_dir if you might need it most case if you have more than one coss, aufs_<br>
@@ -29,6 +33,7 @@ Configurations at:<br>
 /usr/local/etc/squid/refresh.conf - _refresh patterns_<br>
 
 *Troubleshoot:*<br>
+chudy.0fees.net _is free domain if error just retry_ <br><br>
 Pfsense GUI's doesn't save your configurations<br>
 Causes:
   * Previous squid packages and scripts doesn't clean up properly(pfsense limitation).
