@@ -4,7 +4,7 @@ if [ "$version" = "7.1" ]; then {
 export PACKAGESITE="ftp://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/i386/7.1-RELEASE/packages/Latest/"
 }
 fi
-pkg_add -r samba3
+pkg_add -r samba33
 /usr/local/bin/testparm 
 dl_missing () {
 	echo "Downloading missing files"
