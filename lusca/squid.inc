@@ -362,7 +362,7 @@ function squid_validate_general($post, $input_errors) {
 		$input_errors[] = "That is not a valid log location dir";
 
 	$log_rotate = trim($post['log_rotate']);
-	if (!empty($log_rotate) && (!is_numeric($log_rotate) or ($log_rotate < 1)))
+	if (!empty($log_rotate) && (!is_numeric($log_rotate)))
 		$input_errors[] = 'You must enter a valid number of days \'Log rotate\' field';
 
 	$webgui_port = $config['system']['webgui']['port'];
@@ -670,7 +670,7 @@ function squid_resync_general() {
 	$logdir = ($settings['log_dir'] ? $settings['log_dir'] : '/var/squid/logs');
 
 	$logdir_cache = $logdir . '/cache.log';
-	$logdir_access = ($settings['log_enabled'] == 'on' ? $logdir . '/access.log' : '/dev/null');
+	$logdir_access = ($settings['log_enabled'] == 'on' ? $logdir . '/access.log' : 'none');
 
 
 	$conf .= <<<EOD
@@ -689,7 +689,7 @@ cache_store_log none
 
 EOD;
 
-  if (!empty($settings['log_rotate'])) {
+  if ($settings['log_rotate'] >= 0){
     $conf .= "logfile_rotate {$settings['log_rotate']}\n";
     squid_install_cron(true);
     }
@@ -1481,11 +1481,7 @@ function squid_generate_rules($type) {
 				}
 			}
 			foreach ($ifaces as $iface) {
-			if ($squid_conf['proxy_port'] > 0) {
-				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> $iface port $port\n";
-			} else {
 				$rules .= "rdr on $iface proto tcp from any to !($iface) port 80 -> 127.0.0.1 port 80\n";
-			}
 			}
 			/* Handle PPPOE case */
 			if($config['pppoe']['mode'] == "server" && $config['pppoe']['localip']) {
