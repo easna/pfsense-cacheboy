@@ -689,7 +689,7 @@ cache_store_log none
 
 EOD;
 
-  if ($settings['log_rotate'] >= 0){
+  if ($settings['log_rotate'] >= 0 && is_numeric($settings['log_rotate'])){
     $conf .= "logfile_rotate {$settings['log_rotate']}\n";
     squid_install_cron(true);
     }
