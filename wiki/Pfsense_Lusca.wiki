@@ -51,3 +51,4 @@ for selective approach where *squidcache* of URL _http://pfsense/pkg_edit.php?xm
 unset($config['installedpackages'][squidcache]);
 write_config();
 }}}
+for donation you may send it to<br> paypal: chudy_fernandez at yahoo dot com
